@@ -41,6 +41,7 @@ install_packages() {
 
 install_vscode() {
   bot "VSCode"
+  echo
   read -p "Would you like to install vscode? [y/N]" -n 1 answer
   echo
     if [[ $answer =~ (yes|y|Y) ]];then

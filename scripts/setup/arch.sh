@@ -20,9 +20,8 @@ require_yay() {
 
 install_package_manager() {
   bot "Looking for yay package manager"
+  echo
   if ! _exists yay ; then
-    echo
-
     read -p "Yay not found. Do you want to install it (required)? [y/N] " -n 1 answer
     echo
     if [[ ! $answer =~ (yes|y|Y) ]];then
@@ -63,6 +62,7 @@ install_packages() {
 
 install_vscode() {
   bot "VSCode"
+  echo
   read -p "Would you like to install vscode? [y/N]" -n 1 answer
   echo
     if [[ $answer =~ (yes|y|Y) ]];then
