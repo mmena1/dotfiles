@@ -1,0 +1,20 @@
+antigen use oh-my-zsh
+
+antigen bundle git
+antigen bundle docker
+antigen bundle asdf
+antigen bundle ssh-agent
+antigen bundle tmux
+antigen bundle archlinux
+antigen bundle bgnotify
+
+antigen bundle zpm-zsh/ls
+
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+
+antigen bundle $HOME/.dotfiles/lib
+
+antigen apply

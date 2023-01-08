@@ -25,3 +25,4 @@ fish
 kitty
 docker
 docker-compose
+xclip

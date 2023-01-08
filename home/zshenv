@@ -1,5 +1,0 @@
-export EDITOR=vim
-export PATH=$HOME/.local/bin:$PATH
-export VISUAL=vim
-export ASDF_DIR=/opt/asdf-vm/
-export DOTFILES=$HOME/.dotfiles

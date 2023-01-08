@@ -1,26 +1,15 @@
+export EDITOR=vim
+export PATH=$HOME/.local/bin:$PATH
+export VISUAL=vim
+export ASDF_DIR=/opt/asdf-vm/
+export DOTFILES=$HOME/.dotfiles
+
 source $HOME/antigen.zsh
 
-antigen use oh-my-zsh
-
-
-antigen bundle git
-antigen bundle docker
-antigen bundle asdf
-antigen bundle ssh-agent
-antigen bundle tmux
-antigen bundle archlinux
-antigen bundle bgnotify
-
-antigen bundle zpm-zsh/ls
-
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zsh-users/zsh-completions
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle zsh-users/zsh-history-substring-search
+# Initialize antigen
+antigen init $HOME/.antigenrc
 
 ZSH_TMUX_AUTOSTART=true
-
-antigen apply
 
 typeset -g -A key
 
