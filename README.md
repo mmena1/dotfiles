@@ -10,7 +10,7 @@ This is my personal dotfiles configuration. Here are some notes:
 - [🚀⭐️ Starship](https://starship.rs/) as a prompt.
 - [nyan cat](./bin/nyan).
 - Dotfile management with [dotbot](https://github.com/anishathalye/dotbot).
-- `update` script for updating dotfiles, npm, brew, gems, etc.
+- `update` script for updating dotfiles, system packages, etc.
 - Will detect your OS and install the corresponding packages (only works for Arch/Manjaro for now).
 - Guided script that will require user input before doing anything.
 - Better [ls](https://the.exa.website/) command.
