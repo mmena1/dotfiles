@@ -1,0 +1,7 @@
+[user]
+	email = martinmena@outlook.com
+	name = Martin Mena
+[pull]
+	rebase = true
+[diff]
+	colorMoved = zebra

@@ -1,0 +1,16 @@
+[git_status]
+format = "[$all_status$ahead_behind]($style)"
+ahead = "⇡[$count](bold bright-blue) "
+diverged = "⇕ ⇡[$ahead_count](bold bright-blue) ⇣[$behind_count](bold bright-blue) "
+behind = "⇣[$count](bold bright-blue) "
+staged = '[\(+$count\)](bold green)'
+untracked = "?[$count](bold bright-blue) "
+conflicted = "=[$count](bold bright-blue) "
+stashed = "$[$count](bold bright-blue) "
+modified = "![$count](bold bright-blue) "
+renamed = "»[$count](bold bright-blue) "
+deleted = "✘[$count](bold bright-blue) "
+style = "bold bright-yellow"
+
+[package]
+disabled = true

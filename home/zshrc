@@ -1,0 +1,40 @@
+source $HOME/antigen.zsh
+
+antigen use oh-my-zsh
+
+
+antigen bundle git
+antigen bundle docker
+antigen bundle asdf
+antigen bundle ssh-agent
+antigen bundle tmux
+antigen bundle archlinux
+antigen bundle bgnotify
+
+antigen bundle zpm-zsh/ls
+
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+
+ZSH_TMUX_AUTOSTART=true
+
+antigen apply
+
+typeset -g -A key
+
+# Set UP and DOWN keys to navigate history
+
+key[Up]="${terminfo[kcuu1]}"
+key[Down]="${terminfo[kcud1]}"
+
+[[ -n "${key[Up]}"   ]] && bindkey -- "${key[Up]}"   history-substring-search-up
+[[ -n "${key[Down]}" ]] && bindkey -- "${key[Down]}" history-substring-search-down
+
+. /opt/asdf-vm/asdf.sh
+fpath=(${ASDF_DIR}/completions $fpath)
+autoload -Uz compinit
+compinit
+
+eval "$(starship init zsh)"

@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+# Get System Updates and dotfiles
+# Based on: https://github.com/denysdovhan/dotfiles/blob/master/scripts/update
+
+trap on_error SIGTERM
+
+source ./scripts/lib/echoes.sh
+source ./scripts/lib/utils.sh
+
+# Set directory
+export DOTFILES=${1:-"$HOME/.dotfiles"}
+
+on_start() {
+  source ./bin/dotfile
+  echo "Before we proceed, please type your sudo password:"
+  sudo -v
+  # Keep-alive: update existing sudo time stamp until the script has finished
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+}
+
+update_dotfiles() {
+  bot "Updating dotfiles..."
+
+  cd "$DOTFILES" || exit
+  action "Pulling latest changes"
+  git pull origin main
+  ok
+
+  action "Linking dotfiles"
+  ./install --except shell
+  cd - > /dev/null 2>&1 || exit
+  ok
+
+  action "Updating Zsh plugins"
+  source $HOME/antigen.zsh
+  antigen update
+  ok
+}
+
+update_system() {
+  bot "Updating system packages..."
+  echo
+  if [ "$(uname)" = "Darwin" ]; then
+      error "OS X is not supported yet :("
+      exit 1
+  elif [ "$(uname)" = "Linux" ]; then
+    if [ "$(cat /etc/*-release | grep manjaro) > /dev/null 2>&1" ]; then
+      echo "You are currently running Manjaro Linux."
+      echo
+      action "Updating packages"
+      pamac update --aur --devel --no-confirm
+      ok
+      action "Cleaning old cached files"
+      pamac clean --keep 3 --no-confirm
+      ok
+    elif [ "$(cat /etc/*-release | grep arch)" ]; then
+      echo "You are currently running an Arch based Linux."
+      echo
+      action "Updtaing packages"
+      echo y | LANG=C yay --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+      action "Cleaning orphaned packages"
+      echo y | LANG=C yay -Yc --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+    else
+      error "This linux distro is not supported yet :("
+      exit 1
+    fi
+  fi
+}
+
+on_finish() {
+  bot "Done!"
+  echo "Happy Coding!"
+
+  source ./bin/nyan
+}
+
+on_error() {
+  error "Unexpected exception!"
+  error "Please manually review and test each function to find why :("
+  exit 1
+}
+
+main() {
+  on_start "$*"
+  update_dotfiles "$*"
+  update_system "$*"
+  on_finish "$*"
+}
+
+main "$*"
