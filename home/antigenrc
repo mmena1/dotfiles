@@ -15,6 +15,6 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-history-substring-search
 
-antigen bundle $HOME/.dotfiles/lib
+antigen bundle $HOME/.dotfiles/lib --no-local-clone
 
 antigen apply

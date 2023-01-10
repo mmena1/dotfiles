@@ -4,12 +4,13 @@ export VISUAL=vim
 export ASDF_DIR=/opt/asdf-vm/
 export DOTFILES=$HOME/.dotfiles
 
-source $HOME/antigen.zsh
+ANTIGEN_PATH=$HOME/.dotfiles
+ZSH_TMUX_AUTOSTART=true
+
+source $ANTIGEN_PATH/antigen/antigen.zsh
 
 # Initialize antigen
 antigen init $HOME/.antigenrc
-
-ZSH_TMUX_AUTOSTART=true
 
 typeset -g -A key
 
