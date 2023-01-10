@@ -1,6 +1,10 @@
 # Martin Mena’s dotfiles
 
-This is my personal dotfiles configuration. Here are some notes:
+This is my personal dotfiles configuration.
+
+![shell_demo](https://user-images.githubusercontent.com/4404853/211460867-4cab5adb-c979-4a47-86a5-e6bb11f9f0dc.gif)
+
+Here are some notes:
 
 - My weapon of choice is Arch/Manjaro.
   - May change in the future, but now I'm happy with Arch based distros.
@@ -9,6 +13,9 @@ This is my personal dotfiles configuration. Here are some notes:
   - I still have my old zsh configuration as a backup in case I stumble upon incompatible scripts (happened once to me).
 - [🚀⭐️ Starship](https://starship.rs/) as a prompt.
 - [nyan cat](./bin/nyan).
+
+  ![image](https://user-images.githubusercontent.com/4404853/211462357-b33b64a8-075e-458b-8e26-0e6494db993d.png)
+
 - Dotfile management with [dotbot](https://github.com/anishathalye/dotbot).
 - `update` script for updating dotfiles, system packages, etc.
 - Will detect your OS and install the corresponding packages (only works for Arch/Manjaro for now).
@@ -24,8 +31,12 @@ This is my personal dotfiles configuration. Here are some notes:
 - Useful [aliases](./lib/aliases.zsh).
 - Git [aliases](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git).
 - [Tmux](https://github.com/tmux/tmux) with the awesome [configuration by gpakosz](https://github.com/gpakosz/.tmux).
+![Screenshot](https://cloud.githubusercontent.com/assets/553208/19740585/85596a5a-9bbf-11e6-8aa1-7c8d9829c008.gif)
+
 
 ## Fish features
+![shell_demo2](https://user-images.githubusercontent.com/4404853/211461280-e4396733-53dd-46da-a915-ef8bffd8afa1.gif)
+
 - Same as Zsh, without the baggage of oh-my-zsh. No 3rd-party plugins, just my custom scripts that I adapted from oh-my-zsh.
 - No tmux :(
     - I couldn't properly configure the shell to auto start/close tmux and
