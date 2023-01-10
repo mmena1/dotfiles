@@ -21,7 +21,7 @@ This is my personal dotfiles configuration. Here are some notes:
 - Syntax highlighting of commands while they are typed.
 - Browser-like substring search for history.
 - [antigen](https://github.com/zsh-users/antigen) for dependency management.
-- Useful [aliases](./home/zlogin).
+- Useful [aliases](./lib/aliases.zsh).
 - Git [aliases](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git).
 - [Tmux](https://github.com/tmux/tmux) with the awesome [configuration by gpakosz](https://github.com/gpakosz/.tmux).
 
