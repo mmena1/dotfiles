@@ -1,8 +1,11 @@
 # Martin Mena’s dotfiles
 
+
 This is my personal dotfiles configuration.
 
-![shell_demo](https://user-images.githubusercontent.com/4404853/211460867-4cab5adb-c979-4a47-86a5-e6bb11f9f0dc.gif)
+<p align="center">
+  <img alt="Shell demo" src="https://user-images.githubusercontent.com/4404853/211460867-4cab5adb-c979-4a47-86a5-e6bb11f9f0dc.gif" width="980px">
+</p>
 
 Here are some notes:
 
@@ -31,11 +34,11 @@ Here are some notes:
 - Useful [aliases](./lib/aliases.zsh).
 - Git [aliases](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git).
 - [Tmux](https://github.com/tmux/tmux) with the awesome [configuration by gpakosz](https://github.com/gpakosz/.tmux).
-![Screenshot](https://cloud.githubusercontent.com/assets/553208/19740585/85596a5a-9bbf-11e6-8aa1-7c8d9829c008.gif)
+
+  ![Screenshot](https://cloud.githubusercontent.com/assets/553208/19740585/85596a5a-9bbf-11e6-8aa1-7c8d9829c008.gif)
 
 
 ## Fish features
-![shell_demo2](https://user-images.githubusercontent.com/4404853/211461280-e4396733-53dd-46da-a915-ef8bffd8afa1.gif)
 
 - Same as Zsh, without the baggage of oh-my-zsh. No 3rd-party plugins, just my custom scripts that I adapted from oh-my-zsh.
 - No tmux :(
