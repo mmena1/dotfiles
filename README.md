@@ -4,8 +4,9 @@
 This is my personal dotfiles configuration.
 
 <p align="center">
-  <img alt="Shell demo" src="https://user-images.githubusercontent.com/4404853/211460867-4cab5adb-c979-4a47-86a5-e6bb11f9f0dc.gif" width="980px">
+  <img alt="Shell demo" src="https://user-images.githubusercontent.com/4404853/211977100-8a39ffda-594c-4460-bd73-da09c7aa1d4e.gif" width="980px">
 </p>
+
 
 Here are some notes:
 
