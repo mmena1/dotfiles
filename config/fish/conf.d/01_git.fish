@@ -27,8 +27,8 @@ abbr grhh       git reset --hard
 abbr gco        git checkout
 abbr gcb        git checkout -b
 abbr gcom       git checkout \(__git.default_branch\)
-abbr ggpush     git push origin (__git.current_branch)
-abbr ggpull     git pull origin (__git.current_branch)
+abbr ggpush     git push origin \(__git.current_branch\)
+abbr ggpull     git pull origin \(__git.current_branch\)
 abbr ggsup      git branch --set-upstream-to=origin/(__git.current_branch)
 abbr grset      git remote set-url
 abbr grv        git remote -v
