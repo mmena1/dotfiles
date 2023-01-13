@@ -1,3 +1,4 @@
 if status is-interactive
-    # Commands to run in interactive sessions can go here
+    # Set python debugger to ipdb - on fish it must be set with `sset_trace`
+    set -x PYTHONBREAKPOINT ipdb.sset_trace
 end
