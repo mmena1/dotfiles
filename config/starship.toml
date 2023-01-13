@@ -1,3 +1,5 @@
+command_timeout = 5000
+
 [git_status]
 format = "[$conflicted$stashed$deleted$renamed$modified$untracked$staged$ahead_behind]($style)"
 ahead = "⇡[$count](bold bright-blue) "
