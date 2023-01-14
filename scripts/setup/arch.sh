@@ -9,7 +9,7 @@ require_yay() {
     running "pacman $1 $2"
     if ! pacman -Qi $1 > /dev/null 2>&1 ; then
         action "yay -S $1 $2"
-        sudo yay -S $1 $2
+        yay -S $1 $2
         if [[ $? != 0 ]]; then
             error "failed to install $1! aborting..."
             # exit -1
@@ -54,7 +54,7 @@ install_packages() {
   fi
 
   for F in $(cat ./scripts/setup/pkglist.txt); do
-    echo y | LANG=C require_yay $F --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+    require_yay $F --noconfirm --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
   done
 
   ok "Installation finished!"
