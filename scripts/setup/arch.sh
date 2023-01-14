@@ -93,7 +93,7 @@ install_vscode() {
     echo
     if [[ $answer =~ (yes|y|Y) ]] ;then
       action "checking if snapd is enabled"
-      if _exists snapd ;then
+      if _exists snap ;then
         action "snap install code --classic"
         sudo snap install code --classic
         ok
