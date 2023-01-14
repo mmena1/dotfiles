@@ -14,7 +14,7 @@ bootstrap_os() {
       error "OS X is not supported yet :("
       exit 1
   elif [ "$(uname)" = "Linux" ]; then
-    if [ "$(cat /etc/*-release | grep manjaro) > /dev/null 2>&1" ]; then
+    if cat /etc/*-release | grep manjaro > /dev/null 2>&1; then
       bot "You are currently running Manjaro Linux."
       echo
       read -p "Do you want to proceed with Manjaro setup? [y/N] " -n 1 answer
@@ -23,7 +23,7 @@ bootstrap_os() {
         exit 1
       fi
       source  ./scripts/setup/manjaro.sh
-    elif [ "$(cat /etc/*-release | grep arch)" ]; then
+    elif cat /etc/*-release | grep arch > /dev/null 2>&1; then
       bot "You are currently running an Arch based Linux."
       echo
       read -p "Do you want to proceed with Arch setup? [y/N] " -n 1 answer
