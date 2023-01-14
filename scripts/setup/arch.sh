@@ -81,7 +81,7 @@ install_snapd() {
       ok "Skipping"
     fi
   else
-    echo "Snapd already installed!"
+    ok "Snapd already installed!"
   fi
 }
 
@@ -104,7 +104,7 @@ install_vscode() {
       ok "Skipping"
     fi
   else
-    echo "VSCode already installed"
+    ok "VSCode already installed"
   fi
 }
 

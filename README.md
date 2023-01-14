@@ -14,8 +14,8 @@ Here are some notes:
   - May change in the future, but now I'm happy with Arch based distros.
 - Fish and Zsh configurations.
   - I used to work with Zsh / ["Oh My ZSH!"](http://ohmyz.sh/), but I'm currently using Fish with custom configurations.
-  - I still have my old zsh configuration as a backup in case I stumble upon incompatible scripts (happened once to me).
-- [🚀⭐️ Starship](https://starship.rs/) as a prompt.
+  - I still have my old zsh configuration as a backup in case I stumble upon incompatible scripts/commands (happened once to me).
+- [⭐️🚀 Starship](https://starship.rs/) as a prompt.
 - [nyan cat](./bin/nyan).
 
   ![image](https://user-images.githubusercontent.com/4404853/211462357-b33b64a8-075e-458b-8e26-0e6494db993d.png)
@@ -41,13 +41,12 @@ Here are some notes:
 
 ## Fish features
 
-- Same as Zsh, without the baggage of oh-my-zsh. No 3rd-party plugins, just my custom scripts that I adapted from oh-my-zsh.
-- No tmux :(
-    - I couldn't properly configure the shell to auto start/close tmux and
-    having to manually type `tmux` and `exit` every time I open a new terminal is a deal breaker for me.
-    - [Kitty](https://sw.kovidgoyal.net/kitty/) to the rescue :D. It offers most of the tmux features plus some other cool stuff.
-
-Missing feature? 🍴 Fork this repo and make it better!
+- :zap: Blazing fast - No 3rd-party plugins or frameworks, just my custom scripts that I adapted from oh-my-zsh.
+- :feather: Lightweight - Feature wise is the same as oh-my-zsh, without the baggage of extra plugins and scripts.
+- No tmux :sob:
+  - I couldn't properly configure the shell to auto start/close tmux and
+  having to manually type `tmux` and `exit` every time I open a new terminal is such a drag! :goberserk:
+  - [Kitty](https://sw.kovidgoyal.net/kitty/) to the rescue :smiley_cat:. It offers most of the tmux features plus some other cool stuff.
 
 ## Installation
 
@@ -71,8 +70,8 @@ cd $HOME/.dotfiles
 - [ ] Option for unattended script that installs the default config without prompting the user.
 - [ ] Support for Ubuntu/Debian
 - [ ] Migrate to [chezmoi](https://www.chezmoi.io/)
-- [ ] (Maybe) Support for MacOS - I'm not a fan of Macbooks, but sometimes I'm forced to work with them.
-  If that happens in the future, I may reconsider adding support for them.
+- [ ] (Maybe) Support for MacOS - I'm not a fan of MacOS, but sometimes I'm forced to work with it.
+  If that happens in the future, I may reconsider adding support for it.
 
 ## Updating
 
@@ -95,7 +94,7 @@ These OMZ plugins are included:
 - [`asdf`](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/asdf) - Adds integration with [asdf](https://asdf-vm.com/).
 - [`ssh-agent`](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/ssh-agent) - automatically starts ssh-agent to set up and load whichever credentials you want for ssh connections.
 
-- More are listed in [`.zshrc`](./home/zshrc) (it's hard to keep the list updated).
+- More are listed in [`.antigenrc`](./home/antigenrc) (it's hard to keep the list updated :weary:).
 
 ## Tip jar
 

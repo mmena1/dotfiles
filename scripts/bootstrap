@@ -42,8 +42,9 @@ bootstrap_os() {
 configure_tmux() {
   bot "Configuring tmux"
   echo
-  read -p "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git? (I recommend it) [y/N]" -n 1 answer
-  echo
+  if [ ! -d "$HOME/.tmux" ] ; then
+    read -p "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git? (I recommend it) [y/N]" -n 1 answer
+    echo
     if [[ $answer =~ (yes|y|Y) ]];then
       action "git clone https://github.com/gpakosz/.tmux.git"
       git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux
@@ -54,91 +55,115 @@ configure_tmux() {
     else
       ok "Skipping"
     fi
-}
-
-configure_asdf() {
-  if _exists asdf; then
-    bot "asdf binary detected"
-    echo
-    read -p "Would you like to install the languages defined in .tool-versions? [y/N]" -n 1 answer
-    echo
-    if [[ $answer =~ (yes|y|Y) ]];then
-      if cat ~/.tool-versions > /dev/null 2>&1 ;then
-        while read -r line; do
-          # get the first word of the line
-          language=`echo $line | head -n1 | awk '{print $1;}'`
-          running "$language"
-          # is language already installed?
-          if ! asdf where $language > /dev/null 2>&1 ;then
-            # does the plugin exist in the remote repos?
-            if asdf plugin list all | grep -E "^$language\s" > /dev/null 2>&1 ;then
-              # is the plugin not installed already?
-              if ! asdf plugin list | grep "$language" > /dev/null 2>&1 ;then
-                action "asdf plugin-add $language"
-                asdf plugin-add $language
-              fi
-              action "asdf list-all $language"
-              asdf list-all $language
-              action "asdf install $language"
-              asdf install $language
-            else
-              error "Plugin $language does not exist."
-            fi
-          else
-            echo "$language already installed."
-          fi
-          ok
-
-        done < ~/.tool-versions
-      else
-        error "~/.tool-versions not found. Skipping..."
-      fi
-    else
-      ok "Skipping"
-    fi
+  else
+    ok "Tmux already configured!"
   fi
 }
 
-configure_docker() {
-  bot "Setting docker"
+configure_asdf() {
+  bot "Checking asdf..."
+  if _exists asdf; then
+    echo "asdf detected!"
+  else
+    asdf_path = "/opt/asdf-vm/asdf.sh"
+    action "Sourcing asdf"
+    source $asdf_path > /dev/null 2>&1
+    if [ $? != 0 ]; then
+      error "Couldn't source asdf, check the binary exists on $asdf_path"
+      read -p "Continue? [y/N]" -n 1 answer
+      echo
+      if [[ ! $answer =~ (yes|y|Y) ]];then
+        exit 1
+      fi
+    fi
+  fi
   echo
-  read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 answer
+  read -p "Would you like to install the languages defined in .tool-versions? [y/N]" -n 1 answer
   echo
   if [[ $answer =~ (yes|y|Y) ]];then
-    if ! _exists docker ;then
-      action "Enabling docker"
-      sudo systemctl enable --now docker.service
-      ok
-    fi
-    if ! groups | grep -q docker; then
-      action "Adding user to the docker group"
-      sudo gpasswd -a $LOGNAME docker
-      ok
+    if cat ~/.tool-versions > /dev/null 2>&1 ;then
+      while read -r line; do
+        # get the first word of the line
+        language=`echo $line | head -n1 | awk '{print $1;}'`
+        running "$language"
+        # is language already installed?
+        if ! asdf where $language > /dev/null 2>&1 ;then
+          # does the plugin exist in the remote repos?
+          if asdf plugin list all | grep -E "^$language\s" > /dev/null 2>&1 ;then
+            # is the plugin not installed already?
+            if ! asdf plugin list | grep "$language" > /dev/null 2>&1 ;then
+              action "asdf plugin-add $language"
+              asdf plugin-add $language
+            fi
+            action "asdf list-all $language"
+            asdf list-all $language > /dev/null
+            ok
+            action "asdf install $language"
+            asdf install $language && ok || error "Couldn't install $language"
+          else
+            error "Plugin $language does not exist."
+          fi
+        else
+          echo "$language already installed."
+        fi
+        ok
+
+      done < ~/.tool-versions
     else
-      ok "User is already a member of the docker group"
+      error "~/.tool-versions not found. Skipping..."
     fi
   else
     ok "Skipping"
   fi
 }
 
-set_shell() {
-  bot "Setting fish as the default shell"
-  read -p "If fish binary is not detected, it will fall back to zsh. Continue? [y/N]" -n 1 answer
+configure_docker() {
+  bot "Docker"
   echo
-  if [[ $answer =~ (yes|y|Y) ]];then
-    if command -v fish > /dev/null ; then
-      action "Setting fish as default"
-      chsh -s "$(command -v fish)" && ok || error "Cannot set Fish as default shell!"
+  if ! _exists docker ;then
+    read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 answer
+    echo
+    if [[ $answer =~ (yes|y|Y) ]];then
+      action "Enabling docker"
+      sudo systemctl enable --now docker.service
+      ok
     else
-      warn "Fish binary not detected, falling back to zsh..."
-      if command -v zsh > /dev/null ; then
-        action "Setting zsh as default"
-        chsh -s "$(command -v zsh)" && ok || error "Cannot set Zsh as default shell!"
+      ok "Skipping"
+    fi
+  else
+    ok "Docker already installed!"
+  fi
+  if _exists docker && ! groups | grep -q docker; then
+    action "Adding user to the docker group"
+    sudo gpasswd -a $LOGNAME docker
+    ok
+  else
+    ok "User is already a member of the docker group"
+  fi
+}
+
+set_shell() {
+  bot "Configuring SHELL..."
+  echo
+  if [ ! $SHELL = $(command -v fish) ]; then
+    read -p "Setting fish as default. If fish binary is not detected, it will fall back to zsh. Continue? [y/N]" -n 1 answer
+    echo
+    if [[ $answer =~ (yes|y|Y) ]];then
+      if command -v fish > /dev/null ; then
+        action "Setting fish as default"
+        chsh -s "$(command -v fish)" && ok || error "Cannot set Fish as default shell!"
       else
-        warn "Zsh binary not detected, skipping..."
+        warn "Fish binary not detected, falling back to zsh..."
+        if command -v zsh > /dev/null ; then
+          action "Setting zsh as default"
+          chsh -s "$(command -v zsh)" && ok || error "Cannot set Zsh as default shell!"
+        else
+          warn "Zsh binary not detected, skipping..."
+        fi
       fi
     fi
+  else
+    ok "Fish already set"
   fi
 }
 
