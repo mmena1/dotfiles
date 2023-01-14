@@ -54,7 +54,7 @@ install_packages() {
   fi
 
   for F in $(cat ./scripts/setup/pkglist.txt); do
-    require_yay $F --noconfirm --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+    require_yay $F --noconfirm --noprovides --answerdiff None --answerclean None --mflags "--noconfirm" > /dev/null 2>&1
   done
 
   ok "Installation finished!"

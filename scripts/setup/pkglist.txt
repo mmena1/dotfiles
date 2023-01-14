@@ -19,7 +19,6 @@ otf-nerd-fonts-fira-code
 zsh
 zsh-syntax-highlighting
 zsh-autosuggestions
-oh-my-zsh-git
 tmux
 fish
 kitty

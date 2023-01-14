@@ -45,8 +45,8 @@ configure_tmux() {
   read -p "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git? (I recommend it) [y/N]" -n 1 answer
   echo
     if [[ $answer =~ (yes|y|Y) ]];then
-      action "git clone https://github.com/gpakosz/.tmux.git ~"
-      git clone https://github.com/gpakosz/.tmux.git ~
+      action "git clone https://github.com/gpakosz/.tmux.git"
+      git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux
       ok
       action "ln -s -f ~/.tmux/.tmux.conf ~/.tmux.conf"
       ln -s -f ~/.tmux/.tmux.conf ~/.tmux.conf
