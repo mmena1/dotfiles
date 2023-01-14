@@ -70,7 +70,7 @@ install_vscode() {
         if ! systemctl is-enabled --quiet snapd ;then
           action "enabling snapd"
           sudo systemctl enable --now snapd.socket
-          ln -s /var/lib/snapd/snap /snap
+          sudo ln -s /var/lib/snapd/snap /snap
           ok
         fi
         action "snap install code --classic"
