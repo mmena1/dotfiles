@@ -60,25 +60,52 @@ install_packages() {
   ok "Installation finished!"
 }
 
-install_vscode() {
-  bot "VSCode"
+install_snapd() {
+  bot "Checking snapd..."
   echo
-  read -p "Would you like to install vscode? [y/N]" -n 1 answer
-  echo
+  if ! _exists snap ;then
+    echo
+    read -p "Would you like to install the snapd store for propietary apps such as MS VSCode? [y/N]" -n 1 answer
+    echo
     if [[ $answer =~ (yes|y|Y) ]];then
-        action "checking if snapd is enabled"
-        if ! systemctl is-enabled --quiet snapd ;then
-          action "enabling snapd"
-          sudo systemctl enable --now snapd.socket
-          sudo ln -s /var/lib/snapd/snap /snap
-          ok
-        fi
-        action "snap install code --classic"
-        snap install code --classic
-        ok
+      action "checking if snapd exists"
+      require_yay snapd
+      action "enabling apparmor"
+      sudo systemctl enable --now snapd.apparmor
+      ok
+      action "enabling snapd"
+      sudo systemctl enable --now snapd.socket
+      sudo ln -s /var/lib/snapd/snap /snap
+      ok
     else
       ok "Skipping"
     fi
+  else
+    echo "Snapd already installed!"
+  fi
+}
+
+install_vscode() {
+  bot "Checking VSCode..."
+  echo
+  if ! _exists code ; then
+    read -p "Would you like to install vscode? [y/N]" -n 1 answer
+    echo
+    if [[ $answer =~ (yes|y|Y) ]] ;then
+      action "checking if snapd is enabled"
+      if _exists snapd ;then
+        action "snap install code --classic"
+        sudo snap install code --classic
+        ok
+      else
+        warn "Please install and enable snapd for VSCode"
+      fi
+    else
+      ok "Skipping"
+    fi
+  else
+    echo "VSCode already installed"
+  fi
 }
 
 main() {
@@ -86,6 +113,7 @@ main() {
   passwordless_sudo "$*"
   install_package_manager "$*"
   install_packages "$*"
+  install_snapd "$*"
   install_vscode "$*"
 
 }

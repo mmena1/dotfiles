@@ -12,7 +12,6 @@ tree
 bat
 ttf-fira-code
 starship
-snapd
 asdf-vm
 rcm
 otf-nerd-fonts-fira-code
