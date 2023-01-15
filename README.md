@@ -75,6 +75,10 @@ cd $HOME/.dotfiles
 - [ ] Migrate to [chezmoi](https://www.chezmoi.io/).
 - [ ] (Maybe) Support for MacOS - I'm not a fan of MacOS, but sometimes I'm forced to work with it.
   If that happens in the future, I may reconsider adding support for it.
+- [ ] Improve fish aliases.
+  - Currently it uses fish abbreviations which expands upon pressing space or enter.
+  This clutters the terminal output if the abbr is long. Instead, it would be great to use fish aliases.
+- [ ] Move TODOs to proper github issues :trollface:. These are just things that comes to my mind :sweat_smile:.
 
 ## Updating
 
@@ -97,6 +101,17 @@ These OMZ plugins are included:
 - [`asdf`](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/asdf) - Adds integration with [asdf](https://asdf-vm.com/).
 - [`ssh-agent`](https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/ssh-agent) - automatically starts ssh-agent to set up and load whichever credentials you want for ssh connections.
 - More are listed in [`.antigenrc`](./home/antigenrc) (it's hard to keep the list updated :weary:).
+
+### Custom Fish scripts
+
+- I included custom fish scripts by adapting from oh-my-zsh, like git and exa abbreviations.
+- Fish doesn't need plugins as zsh does. Just some personal touches :sunglasses:
+
+### Dotbot
+
+It uses [dotbot](https://github.com/anishathalye/dotbot) as a github submodule to manage dotfiles.
+What it basically does is to symlink the files from `home` and `config` directories
+into your `~` home folder and then run the bootstrap scripts to setup the system apps I personally use.
 
 ## Tip jar
 
