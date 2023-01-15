@@ -121,7 +121,7 @@ If you wanna buy me a coffee, it's always appreciated :)
 
 ## Thanks to...
 
-- [GitHub ❤ ~/](http://dotfiles.github.com/) for its great dotfiles repo list.
+- [GitHub ❤ ~/](https://dotfiles.github.io/) for its great dotfiles repo list.
 - [Denys Dovhan’s dotfiles](https://github.com/denysdovhan/dotfiles) for providing the
   base structure and starting point for this repo.
 - [Adam Eivy's dotfiles](https://github.com/atomantic/dotfiles) for his awesome bot scripts and inspiration.
