@@ -14,13 +14,12 @@ ttf-fira-code
 starship
 asdf-vm
 rcm
-otf-nerd-fonts-fira-code
+ttf-firacode-nerd
 zsh
 zsh-syntax-highlighting
 zsh-autosuggestions
 tmux
 fish
-kitty
 docker
 docker-compose
 xclip
