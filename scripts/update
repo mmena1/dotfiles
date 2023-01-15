@@ -45,7 +45,7 @@ update_system() {
       error "OS X is not supported yet :("
       exit 1
   elif [ "$(uname)" = "Linux" ]; then
-    if [ "$(cat /etc/*-release | grep manjaro) > /dev/null 2>&1" ]; then
+    if cat /etc/*-release | grep manjaro > /dev/null 2>&1; then
       echo "You are currently running Manjaro Linux."
       echo
       action "Updating packages"
@@ -54,13 +54,13 @@ update_system() {
       action "Cleaning old cached files"
       pamac clean --keep 3 --no-confirm
       ok
-    elif [ "$(cat /etc/*-release | grep arch)" ]; then
+    elif cat /etc/*-release | grep arch > /dev/null 2>&1; then
       echo "You are currently running an Arch based Linux."
       echo
       action "Updtaing packages"
-      echo y | LANG=C yay --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+      yay --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
       action "Cleaning orphaned packages"
-      echo y | LANG=C yay -Yc --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
+      yay -Yc --noprovides --answerdiff None --answerclean None --mflags "--noconfirm"
     else
       error "This linux distro is not supported yet :("
       exit 1
