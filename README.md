@@ -62,23 +62,7 @@ cd $HOME/.dotfiles
 
 ## TODOs / Planned features
 
-- [x] Remove [Kitty](https://sw.kovidgoyal.net/kitty/) :smiley_cat: and try to make tmux work on fish.
-  - I prefer not to depend on terminal programs and use whatever comes by default on the system.
-  - Kitty was good but I'm already used to tmux and it's shortcuts.
-- [ ] Choice between Zsh and Fish (or both) instead of forcing both of them during installation.
-- [ ] Option for unattended script that installs the default config without prompting the user.
-- [ ] Support for Ubuntu/Debian.
-- [ ] Remove support for Manjaro since it has some [issues](https://manjarno.snorlax.sh/).
-  - I think [EndeavourOS](https://endeavouros.com/) is much closer to a pure Arch experience.
-  - Manjaro does it's own things like delaying updates which may break some AUR packages
-  and installing some [bloatware](https://gitlab.manjaro.org/profiles-and-settings/iso-profiles/-/blob/master/manjaro/kde/Packages-Desktop) by default that I will never use.
-- [ ] Migrate to [chezmoi](https://www.chezmoi.io/).
-- [ ] (Maybe) Support for MacOS - I'm not a fan of MacOS, but sometimes I'm forced to work with it.
-  If that happens in the future, I may reconsider adding support for it.
-- [ ] Improve fish aliases.
-  - Currently it uses fish abbreviations which expands upon pressing space or enter.
-  This clutters the terminal output if the abbr is long. Instead, it would be great to use fish aliases.
-- [ ] Move TODOs to proper github issues :trollface:. These are just things that comes to my mind :sweat_smile:.
+- [x] Move TODOs to proper github issues :trollface:. These are just things that comes to my mind :sweat_smile:.
 
 ## Updating
 
