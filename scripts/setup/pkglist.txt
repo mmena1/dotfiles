@@ -13,7 +13,6 @@ bat
 ttf-fira-code
 starship
 asdf-vm
-rcm
 ttf-firacode-nerd
 zsh
 zsh-syntax-highlighting

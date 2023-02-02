@@ -69,7 +69,7 @@ install_snapd() {
     echo
     if [[ $answer =~ (yes|y|Y) ]];then
       action "checking if snapd exists"
-      require_yay snapd
+      require_yay snapd --noconfirm
       action "enabling apparmor"
       sudo systemctl enable --now snapd.apparmor
       ok

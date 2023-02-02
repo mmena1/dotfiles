@@ -65,7 +65,7 @@ configure_asdf() {
   if _exists asdf; then
     echo "asdf detected!"
   else
-    asdf_path = "/opt/asdf-vm/asdf.sh"
+    asdf_path="/opt/asdf-vm/asdf.sh"
     action "Sourcing asdf"
     source $asdf_path > /dev/null 2>&1
     if [ $? != 0 ]; then
