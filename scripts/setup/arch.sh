@@ -70,12 +70,12 @@ install_snapd() {
     if [[ $answer =~ (yes|y|Y) ]];then
       action "checking if snapd exists"
       require_yay snapd --noconfirm
+      action "enabling snapd"
+      sudo systemctl enable --now snapd
+      sudo ln -s /var/lib/snapd/snap /snap
+      ok
       action "enabling apparmor"
       sudo systemctl enable --now snapd.apparmor
-      ok
-      action "enabling snapd"
-      sudo systemctl enable --now snapd.socket
-      sudo ln -s /var/lib/snapd/snap /snap
       ok
     else
       ok "Skipping"
