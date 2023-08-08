@@ -142,23 +142,18 @@ configure_docker() {
   fi
 }
 
-set_shell() {
+set_fish_shell() {
   bot "Configuring SHELL..."
   echo
   if [ ! $SHELL = $(command -v fish) ]; then
-    read -p "Setting fish as default. If fish binary is not detected, it will fall back to zsh. Continue? [y/N]" -n 1 answer
+    read -p "Setting fish as default. Continue? [y/N]" -n 1 answer
     echo
     if [[ $answer =~ (yes|y|Y) ]];then
       if command -v fish > /dev/null ; then
         action "Setting fish as default"
         chsh -s "$(command -v fish)" && ok || error "Cannot set Fish as default shell!"
       else
-        warn "Fish binary not detected, falling back to zsh..."
-        if command -v zsh > /dev/null ; then
-          action "Setting zsh as default"
-          chsh -s "$(command -v zsh)" && ok || error "Cannot set Zsh as default shell!"
-        else
-          warn "Zsh binary not detected, skipping..."
+        warn "Fish binary not detected, skipping..."
         fi
       fi
     fi
@@ -189,7 +184,7 @@ main() {
   configure_tmux "$*"
   configure_asdf "$*"
   configure_docker "$*"
-  set_shell "$*"
+  set_fish_shell "$*"
   on_finish "$*"
 }
 

@@ -31,11 +31,6 @@ update_dotfiles() {
   ./install --except shell
   cd - > /dev/null 2>&1 || exit
   ok
-
-  action "Updating Zsh plugins"
-  source $HOME/antigen.zsh
-  antigen update
-  ok
 }
 
 update_system() {
