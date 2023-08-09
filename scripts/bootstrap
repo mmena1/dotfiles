@@ -163,7 +163,6 @@ set_fish_shell() {
         chsh -s "$(command -v fish)" && ok || error "Cannot set Fish as default shell!"
       else
         warn "Fish binary not detected, skipping..."
-        fi
       fi
     fi
   else
