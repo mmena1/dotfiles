@@ -20,6 +20,3 @@ ttf-firacode-nerd
 ttf-joypixels
 vim
 xclip
-zsh
-zsh-autosuggestions
-zsh-syntax-highlighting
