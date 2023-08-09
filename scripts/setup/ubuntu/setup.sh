@@ -60,6 +60,7 @@ install_asdf() {
       echo "source ~/.asdf/asdf.fish" >> ~/.config/fish/config.fish
       action "Configuring completions..."
       mkdir -p ~/.config/fish/completions && ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+      source ~/.asdf/asdf.sh
     else
       ok "Skipping"
     fi

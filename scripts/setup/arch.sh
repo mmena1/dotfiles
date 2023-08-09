@@ -108,6 +108,25 @@ install_vscode() {
   fi
 }
 
+configure_asdf() {
+  bot "Checking asdf..."
+  if _exists asdf; then
+    echo "asdf detected!"
+  else
+    asdf_path="/opt/asdf-vm/asdf.sh"
+    action "Sourcing asdf"
+    source $asdf_path > /dev/null 2>&1
+    if [ $? != 0 ]; then
+      error "Couldn't source asdf, check the binary exists on $asdf_path"
+      read -p "Continue? [y/N]" -n 1 answer
+      echo
+      if [[ ! $answer =~ (yes|y|Y) ]];then
+        exit 1
+      fi
+    fi
+  fi
+}
+
 main() {
 
   passwordless_sudo "$*"
