@@ -9,7 +9,7 @@ install_packages() {
 
   bot "The following packages are going to be installed\n"
 
-  cat packages.txt
+  cat ./scripts/setup/ubuntu/packages.txt
 
   echo
 
