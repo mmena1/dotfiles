@@ -32,6 +32,15 @@ bootstrap_os() {
         exit 1
       fi
       source  ./scripts/setup/arch.sh
+    elif cat /etc/*-release | grep ubuntu > /dev/null 2>&1; then
+      bot "You are currently running Ubuntu Linux."
+      echo
+      read -p "Do you want to proceed with Ubuntu setup? [y/N] " -n 1 answer
+      echo
+     if [[ ! $answer =~ (yes|y|Y) ]];then
+        exit 1
+      fi
+      source  ./scripts/setup/ubuntu/setup.sh
     else
       error "This linux distro is not supported yet :("
       exit 1
