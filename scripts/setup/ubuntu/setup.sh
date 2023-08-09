@@ -31,17 +31,14 @@ install_1password() {
     read -p "Would you like to install 1password? [y/N]" -n 1 answer
     echo
     if [[ $answer =~ (yes|y|Y) ]] ;then
-      action "Adding key for apt repo..."
-      curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-      action "Adding apt repo..."
-      echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
-      action "Adding the debsig-verify policy..."
-      sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
-      curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
-      sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-      curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-      action "Installing 1password..."
-      sudo apt install 1password
+      action "checking if snapd is enabled"
+      if _exists snap ;then
+        action "snap install 1password"
+        sudo snap install 1password
+        ok
+      else
+        warn "Please install and enable snapd for 1password"
+      fi
     else
       ok "Skipping"
     fi
