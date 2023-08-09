@@ -19,7 +19,7 @@ install_packages() {
     exit 1
   fi
 
-  xargs -a packages.txt apt install -y
+  xargs -a ./scripts/setup/ubuntu/packages.txt apt install -y
 
   ok "Installation finished!"
 }
