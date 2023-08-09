@@ -96,7 +96,7 @@ main() {
   passwordless_sudo "$*"
   install_packages "$*"
   install_1password "$*"
-  install_asf "$*"
+  install_asdf "$*"
   install_vscode "$*"
 
 }
