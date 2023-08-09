@@ -47,7 +47,7 @@ install_1password() {
   fi
 }
 
-instal_asdf() {
+install_asdf() {
   bot "Checking asdf..."
   echo
   if ! _exists asdf ; then
