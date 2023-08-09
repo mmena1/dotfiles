@@ -92,6 +92,31 @@ install_vscode() {
   fi
 }
 
+install_starship() {
+  bot "Checking starship prompt..."
+  if ! _exists starship ; then
+    action "curl -sS https://starship.rs/install.sh | sh -s -- -y"
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+  else
+    ok "Starship already installed!"
+  fi
+}
+
+install_fira_code_nerdfont() {
+  bot "Fira Code setup."
+  read -p "Would you like to install Fira Code NerdFont to get cool icons on the terminal? [y/N]" -n 1 answer
+  echo
+  if [[ $answer =~ (yes|y|Y) ]] ;then
+    action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip
+    action "Unzipping and adding to ~/.fonts..."
+    unzip FiraCode.zip -d ~/.fonts
+    fc-cache -fv
+  else
+    ok "Skipping"
+  fi
+}
+
 main() {
 
   passwordless_sudo "$*"
@@ -99,7 +124,8 @@ main() {
   install_1password "$*"
   install_asdf "$*"
   install_vscode "$*"
-
+  install_starship "$*"
+  install_fira_code_nerdfont "$*"
 }
 
 main "$*"
