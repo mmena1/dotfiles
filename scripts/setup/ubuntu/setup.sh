@@ -56,8 +56,8 @@ install_asdf() {
     if [[ $answer =~ (yes|y|Y) ]] ;then
       action "Cloning git repo..."
       git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
-      action "Appending source command to config.fish..."
-      echo "source ~/.asdf/asdf.fish" >> ~/.config/fish/config.fish
+      action "Appending source command to 01_asdf.fish..."
+      echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/01_asdf.fish
       action "Configuring completions..."
       mkdir -p ~/.config/fish/completions && ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
       source ~/.asdf/asdf.sh
@@ -112,6 +112,8 @@ install_fira_code_nerdfont() {
     action "Unzipping and adding to ~/.fonts..."
     unzip FiraCode.zip -d ~/.fonts
     fc-cache -fv
+    action "rm -rf FiraCode.zip"
+    rm -rf FiraCode.zip
   else
     ok "Skipping"
   fi
