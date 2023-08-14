@@ -31,41 +31,22 @@ install_1password() {
     read -p "Would you like to install 1password? [y/N]" -n 1 answer
     echo
     if [[ $answer =~ (yes|y|Y) ]] ;then
-      action "checking if snapd is enabled"
-      if _exists snap ;then
-        action "snap install 1password"
-        sudo snap install 1password
-        ok
-      else
-        warn "Please install and enable snapd for 1password"
-      fi
+      action "Adding key for apt repo..."
+      curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+      action "Adding apt repo..."
+      echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
+      action "Adding the debsig-verify policy..."
+      sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+      curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+      sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+      curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+      action "Installing 1password..."
+      sudo apt update && sudo apt install -y 1password
     else
       ok "Skipping"
     fi
   else
     ok "1password already installed"
-  fi
-}
-
-install_asdf() {
-  bot "Checking asdf..."
-  echo
-  if ! _exists asdf ; then
-    read -p "Would you like to install asdf? [y/N]" -n 1 answer
-    echo
-    if [[ $answer =~ (yes|y|Y) ]] ;then
-      action "Cloning git repo..."
-      git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
-      action "Appending source command to 01_asdf.fish..."
-      echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/01_asdf.fish
-      action "Configuring completions..."
-      mkdir -p ~/.config/fish/completions && ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
-      source ~/.asdf/asdf.sh
-    else
-      ok "Skipping"
-    fi
-  else
-    ok "asdf already installed"
   fi
 }
 
@@ -119,15 +100,36 @@ install_fira_code_nerdfont() {
   fi
 }
 
+install_github_cli() {
+  bot "Checking GitHub CLI..."
+  echo
+  if ! _exists gh ; then
+    read -p "Would you like to install GitHub cli? [y/N]" -n 1 answer
+    if [[ $answer =~ (yes|y|Y) ]] ;then
+      # Taken from: https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+      type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+      curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+      && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+      && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+      && sudo apt update \
+      && sudo apt install gh -y
+    else
+      ok "Skipping"
+    fi
+  else
+    ok "GitHub CLI already installed!"
+  fi
+}
+
 main() {
 
   passwordless_sudo "$*"
   install_packages "$*"
   install_1password "$*"
-  install_asdf "$*"
   install_vscode "$*"
   install_starship "$*"
   install_fira_code_nerdfont "$*"
+  install_github_cli "$*"
 }
 
 main "$*"

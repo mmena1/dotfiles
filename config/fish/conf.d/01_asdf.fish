@@ -1,1 +1,1 @@
-source /opt/asdf-vm/asdf.fish
+source ~/.asdf/asdf.fish
