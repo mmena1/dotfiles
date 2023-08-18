@@ -26,7 +26,7 @@ This is my personal dotfiles configuration for 🐟 [Fish](https://fishshell.com
 
 ## Installation
 
-> NOTE: Only works for Arch based distros. May change in the future.
+> NOTE: Only works for Ubuntu and Arch based distros. May change in the future.
 
 Dotfiles are installed by running the following commands in your terminal:
 

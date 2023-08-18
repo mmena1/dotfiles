@@ -32,6 +32,15 @@ bootstrap_os() {
         exit 1
       fi
       source  ./scripts/setup/arch.sh
+    elif cat /etc/*-release | grep ubuntu > /dev/null 2>&1; then
+      bot "You are currently running Ubuntu Linux."
+      echo
+      read -p "Do you want to proceed with Ubuntu setup? [y/N] " -n 1 answer
+      echo
+     if [[ ! $answer =~ (yes|y|Y) ]];then
+        exit 1
+      fi
+      source  ./scripts/setup/ubuntu/setup.sh
     else
       error "This linux distro is not supported yet :("
       exit 1
@@ -60,23 +69,35 @@ configure_tmux() {
   fi
 }
 
+install_asdf() {
+  bot "Checking asdf..."
+  echo
+  if ! _exists asdf ; then
+    read -p "Would you like to install asdf? [y/N]" -n 1 answer
+    echo
+    if [[ $answer =~ (yes|y|Y) ]] ;then
+      action "Cloning git repo..."
+      git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.12.0
+      source ~/.asdf/asdf.sh
+    else
+      ok "Skipping"
+    fi
+  else
+    ok "asdf already installed"
+  fi
+}
+
 configure_asdf() {
   bot "Checking asdf..."
   if _exists asdf; then
     echo "asdf detected!"
+    install_asdf_tools
   else
-    asdf_path="/opt/asdf-vm/asdf.sh"
-    action "Sourcing asdf"
-    source $asdf_path > /dev/null 2>&1
-    if [ $? != 0 ]; then
-      error "Couldn't source asdf, check the binary exists on $asdf_path"
-      read -p "Continue? [y/N]" -n 1 answer
-      echo
-      if [[ ! $answer =~ (yes|y|Y) ]];then
-        exit 1
-      fi
-    fi
+    warn "asdf binary not detected. Skipping..."
   fi
+}
+
+install_asdf_tools() {
   echo
   read -p "Would you like to install the languages defined in .tool-versions? [y/N]" -n 1 answer
   echo
@@ -154,11 +175,42 @@ set_fish_shell() {
         chsh -s "$(command -v fish)" && ok || error "Cannot set Fish as default shell!"
       else
         warn "Fish binary not detected, skipping..."
-        fi
       fi
     fi
   else
     ok "Fish already set"
+  fi
+}
+
+set_ssh_keys() {
+  bot "Checking ssh keys..."
+  echo
+  if [ ! -f ~/.ssh/id_ed25519 ] ; then
+    read -p "Would you like to set ssh keys now? [y/N]" -n 1 answer
+    if [[ $answer =~ (yes|y|Y) ]] ; then
+      echo "Setting ssh keys using the ed25519 algorithm."
+      read -p "Enter your email:" email
+      read -p "Enter the passphrase: (empty for no passphrase)" passphrase
+      action "ssh-keygen -t ed25519 -C $email -q -N $passphrase"
+      ssh-keygen -t ed25519 -C $email -q -N $passphrase
+      ssh-add ~/.ssh/id_ed25519
+    else
+      ok "Skipping"
+    fi
+  else
+    ok "ssh keys already present!"
+  fi
+}
+
+set_ghithub_ssh_key() {
+  if [ -f ~/.ssh/id_ed25519 ] && _exists gh ; then
+    read -p "Would you like to set your public ssh key to your gh account? [y/N]" -n 1 answer
+    if [[ $answer =~ (yes|y|Y) ]] ; then
+      action "gh auth login"
+      gh auth login
+    else
+      ok "Skipping"
+    fi
   fi
 }
 
@@ -182,9 +234,12 @@ on_error() {
 main() {
   bootstrap_os "$*"
   configure_tmux "$*"
+  install_asdf "$*"
   configure_asdf "$*"
   configure_docker "$*"
   set_fish_shell "$*"
+  set_ssh_keys "$*"
+  set_ghithub_ssh_key "$*"
   on_finish "$*"
 }
 

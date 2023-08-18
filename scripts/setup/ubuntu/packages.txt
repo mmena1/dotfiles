@@ -1,0 +1,17 @@
+build-essential
+bat
+cmake
+docker
+docker-compose
+exa
+fish
+htop
+fonts-noto-color-emoji
+powerline
+fonts-powerline
+tmux
+tree
+fonts-firacode
+vim
+xclip
+curl

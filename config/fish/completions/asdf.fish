@@ -1,0 +1,1 @@
+/home/mmena/.asdf/completions/asdf.fish
