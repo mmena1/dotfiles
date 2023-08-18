@@ -17,7 +17,7 @@ This is my personal dotfiles configuration for 🐟 [Fish](https://fishshell.com
 
 - Dotfile management with [dotbot](https://github.com/anishathalye/dotbot).
 - `update` script for updating dotfiles, system packages, etc.
-- Will detect your OS and install the corresponding packages (only works for Arch/Manjaro for now).
+- Will detect your OS and install the corresponding packages.
 - Guided script that will require user input before doing anything.
 - Better [ls](https://the.exa.website/) command.
 - [Tmux](https://github.com/tmux/tmux) with the awesome [configuration by gpakosz](https://github.com/gpakosz/.tmux).
