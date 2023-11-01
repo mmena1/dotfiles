@@ -1,4 +1,6 @@
 python 3.10.2
 ruby 3.2.0
 nodejs 18.13.0
-poetry 1.5.2
+poetry 1.6.1
+aws-vault 7.2.0
+maven 3.9.5
