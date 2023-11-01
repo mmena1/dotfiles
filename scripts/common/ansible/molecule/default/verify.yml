@@ -1,0 +1,17 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+      - name: Test asdf installation
+        block:
+          - command: ~/.asdf/bin/asdf --version
+            register: result
+          - assert:
+              that: "'0.12.0' in result.stdout"
+      - name: Test python
+        block:
+        - command: ~/.asdf/shims/python --version
+          register: result
+        - assert:
+            that: "'3.11.4' in result.stdout"

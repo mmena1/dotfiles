@@ -1,0 +1,26 @@
+---
+- name: "{{ plugin.name }} - Install plugin"
+  command: "~/.asdf/bin/asdf plugin-add {{ plugin.name }} {{ plugin_repo }}"
+  args:
+    creates: "{{ asdf_dir }}/plugins/{{ plugin.name }}"
+  vars:
+    plugin_repo: "{{ plugin.repo | default }}"
+
+- name: "{{ plugin.name }} - Install dependencies"
+  apt:
+    name: "{{ __asdf_plugins_dependencies[plugin.name] }}"
+    state: present
+  become: true
+  when: __asdf_plugins_dependencies[plugin.name] is defined
+
+- name: "{{ plugin.name }} - Install versions"
+  command: "~/.asdf/bin/asdf install {{ plugin.name }} {{ item }}"
+  args:
+    creates: "{{ asdf_dir }}/installs/{{ plugin.name }}/{{ item }}"
+  with_items: "{{ plugin.versions }}"
+  when: plugin.versions is defined
+
+- name: "{{ plugin.name }} - Set global version"
+  command: "~/.asdf/bin/asdf global {{ plugin.name }} {{ plugin.global }}"
+  changed_when: false
+  when: plugin.global is defined

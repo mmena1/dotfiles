@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: asdf
+      vars:
+        asdf_plugins:
+          - name: python
+            versions: [3.11.4]
+            global: 3.11.4

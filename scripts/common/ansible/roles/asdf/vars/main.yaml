@@ -1,0 +1,41 @@
+---
+__asdf_dependencies:
+  - git
+
+__asdf_plugins_dependencies:
+  nodejs:
+    - curl
+    - gpg
+
+  python:
+    - build-essential
+    - curl
+    - libbz2-dev
+    - libffi-dev
+    - liblzma-dev
+    - libncurses5-dev
+    - libreadline-dev
+    - libsqlite3-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxmlsec1-dev
+    - llvm
+    - make
+    - tk-dev
+    - wget
+    - xz-utils
+    - zlib1g-dev
+
+  ruby:
+    - autoconf
+    - bison
+    - build-essential
+    - curl
+    - libffi-dev
+    - libgdbm-dev
+    - libgdbm6
+    - libncurses5-dev
+    - libreadline6-dev
+    - libssl-dev
+    - libyaml-dev
+    - zlib1g-dev

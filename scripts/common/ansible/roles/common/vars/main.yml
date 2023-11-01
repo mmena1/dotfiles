@@ -1,0 +1,44 @@
+---
+
+packages:
+
+  apt:
+    - build-essential
+    - bat
+    - cmake
+    - docker
+    - docker-compose
+    - exa
+    - fish
+    - htop
+    - fonts-noto-color-emoji
+    - powerline
+    - fonts-powerline
+    - tmux
+    - tree
+    - fonts-firacode
+    - vim
+    - xclip
+    - curl
+
+  pacman:
+    - 1password
+    - base-devel
+    - bat
+    - cmake
+    - docker
+    - docker-compose
+    - exa
+    - fish
+    - htop
+    - noto-fonts-emoji
+    - powerline
+    - powerline-fonts
+    - starship
+    - tmux
+    - tree
+    - ttf-fira-code
+    - ttf-firacode-nerd
+    - ttf-joypixels
+    - vim
+    - xclip

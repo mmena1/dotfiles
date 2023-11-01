@@ -1,0 +1,22 @@
+---
+
+- name: "packages | list"
+  ansible.builtin.debug:
+    msg: "{{ packages.pacman }}"
+  when: packages is defined
+
+- name: "pacman | update"
+  become: true
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+  when: ansible_distribution == "Arch"
+
+- name: "packages | install"
+  become: true
+  community.general.pacman:
+    name: "{{ packages.pacman }}"
+    state: present
+    executable: yay
+    extra_args: --builddir /var/cache/yay
+  when: packages is defined

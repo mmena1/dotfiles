@@ -1,0 +1,12 @@
+---
+- name: Install dependencies
+  apt:
+    name: "{{ __asdf_dependencies }}"
+    state: present
+  become: true
+
+- name: Clone repository
+  git:
+    repo: "{{ asdf_repo }}"
+    dest: "{{ asdf_dir }}"
+    version: "{{ asdf_version }}"

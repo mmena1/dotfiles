@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+  - name: default_ubuntu_22
+    image: ubuntu:22.04
+  - name: default_archlinux_base-devel
+    image: archlinux:base-devel
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: "../../roles"
+
+verifier:
+  name: testinfra

@@ -1,0 +1,9 @@
+---
+# Repository
+asdf_repo: https://github.com/asdf-vm/asdf.git
+asdf_dir: ~/.asdf
+asdf_version: v0.12.0
+
+# Settings
+asdf_legacy_version_file: false
+asdf_use_release_candidates: false
