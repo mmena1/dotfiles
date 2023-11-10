@@ -1,0 +1,8 @@
+brew "starship"
+brew "fish"
+brew "eza"
+brew "tmux"
+brew "gh"
+tap "homebrew/cask-fonts"
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"

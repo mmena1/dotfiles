@@ -11,8 +11,14 @@ source ./scripts/lib/utils.sh
 
 bootstrap_os() {
   if [ "$(uname)" = "Darwin" ]; then
-      error "OS X is not supported yet :("
-      exit 1
+      bot "You are currently running MacOS."
+      echo
+      read -p "Do you want to proceed with the setup? [y/N] " -n 1 answer
+      echo
+      if [[ ! $answer =~ (yes|y|Y) ]];then
+        exit 1
+      fi
+      source ./scripts/setup/macos/setup.sh
   elif [ "$(uname)" = "Linux" ]; then
     if cat /etc/*-release | grep manjaro > /dev/null 2>&1; then
       bot "You are currently running Manjaro Linux."
