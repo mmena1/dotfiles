@@ -19,7 +19,7 @@ This is my personal dotfiles configuration for 🐟 [Fish](https://fishshell.com
 - `update` script for updating dotfiles, system packages, etc.
 - Will detect your OS and install the corresponding packages.
 - Guided script that will require user input before doing anything.
-- Better [ls](https://the.exa.website/) command.
+- Better ls command, [eza](https://github.com/eza-community/eza).
 - [Tmux](https://github.com/tmux/tmux) with the awesome [configuration by gpakosz](https://github.com/gpakosz/.tmux).
 
   ![Screenshot](https://cloud.githubusercontent.com/assets/553208/19740585/85596a5a-9bbf-11e6-8aa1-7c8d9829c008.gif)
@@ -56,7 +56,7 @@ This command will update dotfiles and system packages.
 
 ### Custom Fish scripts
 
-- I included custom fish scripts by adapting from oh-my-zsh, like git and exa abbreviations.
+- I included custom fish scripts by adapting from oh-my-zsh, like git and eza abbreviations.
 - Fish doesn't need plugins as zsh does. Just some personal touches :sunglasses:
 
 ### Dotbot

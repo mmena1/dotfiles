@@ -5,7 +5,7 @@ bat
 cmake
 docker
 docker-compose
-exa
+eza
 fish
 htop
 noto-fonts-emoji

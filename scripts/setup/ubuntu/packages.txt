@@ -3,7 +3,7 @@ bat
 cmake
 docker
 docker-compose
-exa
+eza
 fish
 htop
 fonts-noto-color-emoji

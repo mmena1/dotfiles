@@ -1,12 +1,11 @@
-set -Ux EXA_STANDARD_OPTIONS "--group" "--header" "--group-directories-first" "--icons" "--time-style=long-iso" "--color=auto" "--classify"
+set -Ux EZA_STANDARD_OPTIONS "--group" "--header" "--group-directories-first" "--icons" "--time-style=long-iso" "--color=auto" "--classify"
 
-# Temporal fix since exa --git was disabled in current version
-function ll -w=ls -w=exa
-    exa --long $EXA_STANDARD_OPTIONS $argv
+function ll -w=ls -w=__eza.git
+    __eza.git --long $EZA_STANDARD_OPTIONS $argv
 end
 
-function ls -w=ls -w=exa
-    exa $EXA_STANDARD_OPTIONS $argv
+function ls -w=ls -w=eza
+    eza $EZA_STANDARD_OPTIONS $argv
 end
 
 abbr llt ll --tree
