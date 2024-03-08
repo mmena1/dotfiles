@@ -21,11 +21,20 @@ passwordless_sudo() {
     echo
 
     if [[ $answer =~ (yes|y|Y) ]];then
+      if [ "$(uname)" = "Darwin" ]; then
+        if ! sudo grep -q "#includedir /private/etc/sudoers.d" /etc/sudoers; then
+          echo '#includedir /private/etc/sudoers.d' | sudo tee -a /etc/sudoers > /dev/null
+        fi
+        [ ! -d "/private/etc/sudoers.d" ] && sudo mkdir /private/etc/sudoers.d
+        echo -e "Defaults:$LOGNAME    !requiretty\n$LOGNAME ALL=(ALL) NOPASSWD:     ALL" | sudo tee /private/etc/sudoers.d/$LOGNAME
+        echo "You can now run sudo commands without password!"
+      else
         if ! sudo grep -q "@includedir /etc/sudoers.d" /etc/sudoers; then
           echo '@includedir /etc/sudoers.d' | sudo tee -a /etc/sudoers > /dev/null
         fi
         echo -e "Defaults:$LOGNAME    !requiretty\n$LOGNAME ALL=(ALL) NOPASSWD:     ALL" | sudo tee /etc/sudoers.d/$LOGNAME
         echo "You can now run sudo commands without password!"
+      fi
     fi
   fi
 }

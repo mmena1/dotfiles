@@ -44,9 +44,21 @@ install_dependencies() {
     fi
 }
 
+add_fish_to_known_shells() {
+  if ! grep fish /etc/shells > /dev/null 2>&1; then
+    sudo sh -c 'echo /opt/homebrew/bin/fish >> /etc/shells'
+    bot "Please close this shell window so changes take effect."
+    echo
+    read -p "Press any key to continue"
+    exit 0
+  fi
+}
+
 main() {
+  passwordless_sudo "$*"
   install_homebrew "$*"
   install_dependencies "$*"
+  add_fish_to_known_shells "$*"
 }
 
 main "$*"
