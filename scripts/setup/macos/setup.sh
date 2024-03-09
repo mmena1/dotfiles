@@ -33,7 +33,7 @@ install_dependencies() {
     echo
     if [[ $answer =~ (yes|y|Y) ]] ;then
       action "Installing dependencies..."
-      if _exists brew ; then
+      if _exists brew && [[ -f Brewfile ]]; then
         brew bundle
         ok "Dependencies installed"
       else
@@ -46,11 +46,16 @@ install_dependencies() {
 
 add_fish_to_known_shells() {
   if ! grep fish /etc/shells > /dev/null 2>&1; then
-    sudo sh -c 'echo /opt/homebrew/bin/fish >> /etc/shells'
-    bot "Please close this shell window so changes take effect."
-    echo
-    read -p "Press any key to continue"
-    exit 0
+    if sudo sh -c 'echo /opt/homebrew/bin/fish >> /etc/shells'; then
+      bot "Fish shell added to /etc/shells successfully."
+      bot "Please close this shell window so changes take effect."
+      echo
+      read -p "Press any key to continue"
+      exit 0
+    else
+      error "Failed to add Fish shell to /etc/shells. Please check your permissions."
+      exit 1
+    fi
   fi
 }
 

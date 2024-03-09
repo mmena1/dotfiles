@@ -5,6 +5,10 @@ _exists() {
 }
 
 passwordless_sudo() {
+  if [[ ! "$LOGNAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "Error: LOGNAME contains invalid characters."
+    exit 1
+  fi
   if ! sudo -nv > /dev/null 2>&1 ;then
     echo "Please provide your sudo password:"
     sudo -v
