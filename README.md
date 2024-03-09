@@ -26,7 +26,7 @@ This is my personal dotfiles configuration for 🐟 [Fish](https://fishshell.com
 
 ## Installation
 
-> NOTE: Only works for MacOS, Ubuntu and Arch based distros.
+> NOTE: Only works for macOS, Ubuntu and Arch-based distros.
 
 Dotfiles are installed by running the following commands in your terminal:
 
@@ -61,9 +61,9 @@ This command will update dotfiles and system packages.
 
 ### Dotbot
 
-It uses [dotbot](https://github.com/anishathalye/dotbot) as a github submodule to manage dotfiles.
+It uses [dotbot](https://github.com/anishathalye/dotbot) as a GitHub submodule to manage dotfiles.
 What it basically does is to symlink the files from `home` and `config` directories
-into your `~` home folder and then run the bootstrap scripts to setup the system apps I personally use.
+into your `~` home folder and then run the bootstrap scripts to set up the system apps I personally use.
 
 ## Thanks to...
 
