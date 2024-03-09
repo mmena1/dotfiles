@@ -1,3 +1,4 @@
+# Initialize Homebrew for macOS systems
 if [ (uname) = "Darwin" ]
   eval (/opt/homebrew/bin/brew shellenv)
 end
