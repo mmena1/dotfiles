@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+{{ template "common" }}
+
+on_finish() {
+  bot "Setup was successfully done!"
+  echo "Happy Coding!"
+
+  {{ template "nyan" }}
+
+  bot "P.S: Don't forget to restart the terminal if you changed shells :)"
+  echo
+}
+
+main() {
+  on_finish "$*"
+}
+
+main "$*"

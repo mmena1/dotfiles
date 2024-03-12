@@ -1,0 +1,34 @@
+{{ if eq .osid "darwin" -}}
+#!/bin/bash
+
+{{ template "common" }}
+{{ template "passwordless_sudo" }}
+
+install_homebrew() {
+  bot "Checking brew..."
+  echo
+  if ! _exists brew ; then
+    read -p "Would you like to install Homebrew? [y/N]" -n 1 answer
+    echo
+    if [[ $answer =~ (yes|y|Y) ]] ;then
+      action "Installing homebrew..."
+      export NONINTERACTIVE=1
+      bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+      brew analytics off
+      ok "Brew installed"
+    else
+      ok "Skipping"
+    fi
+  else
+    ok "brew already installed"
+  fi
+}
+
+main() {
+  passwordless_sudo "$*"
+  install_homebrew "$*"
+}
+
+main "$*"
+{{ end -}}
