@@ -1,0 +1,26 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+{{ template "common" }}
+
+bot "Checking GitHub CLI..."
+echo
+if ! _exists gh ; then
+  read -p "Would you like to install GitHub cli? [y/N]" -n 1 answer
+  if [[ $answer =~ (yes|y|Y) ]] ;then
+    {{ if eq .osid "linux-debian" -}}
+    type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && sudo apt update \
+    && sudo apt install gh -y
+    {{ end -}}
+  else
+    ok "Skipping"
+  fi
+else
+  ok "GitHub CLI already installed!"
+fi
+
+{{ end -}}

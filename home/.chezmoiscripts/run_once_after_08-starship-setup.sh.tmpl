@@ -1,0 +1,14 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+{{ template "common" }}
+
+bot "Checking starship prompt..."
+if ! _exists starship ; then
+  action "curl -sS https://starship.rs/install.sh | sh -s -- -y"
+  curl -sS https://starship.rs/install.sh | sh -s -- -y
+else
+  ok "Starship already installed!"
+fi
+
+{{ end -}}
