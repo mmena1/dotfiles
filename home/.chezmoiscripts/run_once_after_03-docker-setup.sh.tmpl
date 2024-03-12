@@ -2,33 +2,25 @@
 
 {{ template "common" }}
 
-configure_docker() {
-  bot "Docker"
+bot "Docker"
+echo
+if _exists docker && ! systemctl is-enabled --quiet docker ;then
+  read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 answer
   echo
-  if _exists docker && ! systemctl is-enabled --quiet docker ;then
-    read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 answer
-    echo
-    if [[ $answer =~ (yes|y|Y) ]];then
-      action "Enabling docker"
-      sudo systemctl enable --now docker.service
+  if [[ $answer =~ (yes|y|Y) ]];then
+    action "Enabling docker"
+    sudo systemctl enable --now docker.service
+    ok
+    if ! groups | grep -q docker; then
+      action "Adding user to the docker group"
+      sudo gpasswd -a $LOGNAME docker
       ok
-      if ! groups | grep -q docker; then
-        action "Adding user to the docker group"
-        sudo gpasswd -a $LOGNAME docker
-        ok
-      else
-        ok "User is already a member of the docker group"
-      fi
     else
-      ok "Skipping"
+      ok "User is already a member of the docker group"
     fi
   else
-    ok "Docker already enabled!"
+    ok "Skipping"
   fi
-}
-
-main() {
-  configure_docker "$*"
-}
-
-main "$*"
+else
+  ok "Docker already enabled!"
+fi

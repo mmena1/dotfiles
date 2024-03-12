@@ -2,33 +2,21 @@
 
 {{ template "common" }}
 
-on_start() {
+{{ template "dotfile" }}
 
-  {{ template "dotfile" }}
+bot "This script will guide you through the dofiles setup as well as installing required system packages."
+echo "It will not install anything without your direct agreement!"
+echo
+read -p "Do you want to proceed with the installation? [y/N] " -n 1 answer
+echo
+if [[ ! $answer =~ (yes|y|Y) ]];then
+  exit 1
+fi
 
-  bot "This script will guide you through the dofiles setup as well as installing required system packages."
-  echo "It will not install anything without your direct agreement!"
-  echo
-  read -p "Do you want to proceed with the installation? [y/N] " -n 1 answer
-  echo
-  if [[ ! $answer =~ (yes|y|Y) ]];then
-    exit 1
-  fi
-}
-
-setup_dotfiles() {
-  bot "Setting dotfiles up on the home folder."
-  echo
-  read -p "Proceed? [y/N] " -n 1 answer
-  echo
-  if [[ ! $answer =~ (yes|y|Y) ]];then
-    exit 1
-  fi
-}
-
-main() {
-  on_start "$*"
-  setup_dotfiles "$*"
-}
-
-main "$*"
+bot "Setting dotfiles up on the home folder."
+echo
+read -p "Proceed? [y/N] " -n 1 answer
+echo
+if [[ ! $answer =~ (yes|y|Y) ]];then
+  exit 1
+fi
