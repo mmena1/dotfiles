@@ -6,7 +6,6 @@ packages:
     - 'cmake'
     - 'docker'
     - 'docker-compose'
-    - 'eza'
     - 'fish'
     - 'htop'
     - 'fonts-noto-color-emoji'
