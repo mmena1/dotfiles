@@ -7,7 +7,7 @@ echo
 if ! _exists eza ; then
   read -p "Would you like to install eza? [y/N]" -n 1 answer
   echo
-  if [[ $answer =~ (yes|y|Y) ]] ;then
+  if [[ $answer =~ ^[Yy]$ ]] ;then
     {{ if eq .osid "linux-debian" }}
     action "Adding key for apt repo..."
     wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg

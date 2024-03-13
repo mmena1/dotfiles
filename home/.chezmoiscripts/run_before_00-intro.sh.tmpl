@@ -7,7 +7,7 @@ echo "It will not install anything without your direct agreement!"
 echo
 read -p "Do you want to proceed with the installation? [y/N] " -n 1 answer
 echo
-if [[ ! $answer =~ (yes|y|Y) ]];then
+if [[ ! $answer =~ ^[Yy]$ ]];then
   exit 1
 fi
 
@@ -15,6 +15,6 @@ bot "Setting dotfiles up on the home folder."
 echo
 read -p "Proceed? [y/N] " -n 1 answer
 echo
-if [[ ! $answer =~ (yes|y|Y) ]];then
+if [[ ! $answer =~ ^[Yy]$ ]];then
   exit 1
 fi

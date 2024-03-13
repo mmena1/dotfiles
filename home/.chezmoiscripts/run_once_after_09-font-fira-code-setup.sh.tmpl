@@ -5,7 +5,7 @@
 bot "Fira Code setup."
 read -p "Would you like to install Fira Code NerdFont to get cool icons on the terminal? [y/N]" -n 1 answer
 echo
-if [[ $answer =~ (yes|y|Y) ]] ;then
+if [[ $answer =~ ^[Yy]$ ]] ;then
   action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
   wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip
   if [ -f "FiraCode.zip" ]; then

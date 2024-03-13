@@ -8,7 +8,7 @@ echo
 if ! _exists brew ; then
   read -p "Would you like to install Homebrew? [y/N]" -n 1 answer
   echo
-  if [[ $answer =~ (yes|y|Y) ]] ;then
+  if [[ $answer =~ ^[Yy]$ ]] ;then
     action "Installing homebrew..."
     export NONINTERACTIVE=1
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

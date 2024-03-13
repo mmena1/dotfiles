@@ -9,7 +9,7 @@ fi
 if _exists docker && ! systemctl is-enabled --quiet docker ;then
   read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 answer
   echo
-  if [[ $answer =~ (yes|y|Y) ]];then
+  if [[ $answer =~ ^[Yy]$ ]];then
     action "Enabling docker"
     sudo systemctl enable --now docker.service
     ok

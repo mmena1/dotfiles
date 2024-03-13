@@ -6,7 +6,7 @@ bot "Checking GitHub CLI..."
 echo
 if ! _exists gh ; then
   read -p "Would you like to install GitHub cli? [y/N]" -n 1 answer
-  if [[ $answer =~ (yes|y|Y) ]] ;then
+  if [[ $answer =~ ^[Yy]$ ]] ;then
     {{ if eq .osid "linux-debian" -}}
     type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
