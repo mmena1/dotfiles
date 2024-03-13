@@ -1,0 +1,19 @@
+packages:
+  debian:
+    apt:
+    - 'build-essential'
+    - 'bat'
+    - 'cmake'
+    - 'docker'
+    - 'docker-compose'
+    - 'fish'
+    - 'htop'
+    - 'fonts-noto-color-emoji'
+    - 'powerline'
+    - 'fonts-powerline'
+    - 'tmux'
+    - 'tree'
+    - 'fonts-firacode'
+    - 'vim'
+    - 'xclip'
+    - 'curl'

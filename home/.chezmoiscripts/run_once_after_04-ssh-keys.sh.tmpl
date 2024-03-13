@@ -1,0 +1,38 @@
+{{ template "common" }}
+
+set_ssh_keys() {
+  bot "Checking ssh keys..."
+  echo
+  if [ ! -f ~/.ssh/id_ed25519 ] ; then
+    read -p "Would you like to set ssh keys now? [y/N]" -n 1 -r -s answer
+    if [[ $answer =~ ^[Yy]$ ]] ; then
+      echo "Setting ssh keys using the ed25519 algorithm."
+      read -rp "Enter the passphrase: (empty for no passphrase)" passphrase
+      action "ssh-keygen -t ed25519 -C {{- .email }} -q -N \"$passphrase\""
+      ssh-keygen -t ed25519 -C {{- .email }} -q -N "$passphrase" && ssh-add ~/.ssh/id_ed25519 || { echo "SSH key generation or addition failed"; exit 1; }
+    else
+      ok "Skipping"
+    fi
+  else
+    ok "ssh keys already present!"
+  fi
+}
+
+set_github_ssh_key() {
+  if [ -f ~/.ssh/id_ed25519 ] && _exists gh ; then
+    read -p "Would you like to set your public ssh key to your gh account? [y/N]" -n 1 -r -s answer
+    if [[ $answer =~ ^[Yy]$ ]] ; then
+      action "Adding SSH key to GitHub account"
+      gh ssh-key add ~/.ssh/id_ed25519.pub -t "$(hostname)"
+    else
+      ok "Skipping"
+    fi
+  fi
+}
+
+main() {
+  set_ssh_keys "$*"
+  set_ghithub_ssh_key "$*"
+}
+
+main "$*"
