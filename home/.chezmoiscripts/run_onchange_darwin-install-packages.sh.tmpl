@@ -2,6 +2,7 @@
 
 {{ template "common" }}
 
+brew update
 brew bundle --no-lock --file=/dev/stdin <<EOF
 {{ range .packages.darwin.brews -}}
 brew {{ . | quote }}

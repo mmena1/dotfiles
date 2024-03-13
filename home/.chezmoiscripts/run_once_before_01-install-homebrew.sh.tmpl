@@ -6,7 +6,7 @@
 bot "Checking brew..."
 echo
 if ! _exists brew ; then
-  read -p "Would you like to install Homebrew? [y/N]" -n 1 answer
+  read -p "Would you like to install Homebrew? [y/N]" -n 1 -r -s answer
   echo
   if [[ $answer =~ ^[Yy]$ ]] ;then
     action "Installing homebrew..."
