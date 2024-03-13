@@ -9,7 +9,7 @@ if ! _exists code ; then
   echo
   if [[ $answer =~ (yes|y|Y) ]] ;then
     action "checking if snapd is enabled"
-    if _exists snap ;then
+    if systemctl is-active --quiet snapd ;then
       action "snap install code --classic"
       sudo snap install code --classic
       ok

@@ -21,5 +21,11 @@ if ! _exists gh ; then
 else
   ok "GitHub CLI already installed!"
 fi
+if gh --version >/dev/null 2>&1 ;then
+  ok "GitHub CLI installation verified"
+else
+  error "GitHub CLI installation failed"
+  exit 1
+fi
 
 {{ end -}}

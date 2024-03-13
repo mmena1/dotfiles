@@ -15,6 +15,12 @@ if ! _exists brew ; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
     brew analytics off
     ok "Brew installed"
+    if brew --version >/dev/null 2>&1 ;then
+      ok "Homebrew installation verified"
+    else
+      error "Homebrew installation failed"
+      exit 1
+    fi
   else
     ok "Skipping"
   fi
