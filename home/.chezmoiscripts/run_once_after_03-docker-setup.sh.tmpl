@@ -7,7 +7,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 if _exists docker && ! systemctl is-enabled --quiet docker ;then
-  read -p "Enable docker and add your user to the docker group? [y/N]" -n 1 -r -s answer
+  answer=$(prompt "Enable docker and add your user to the docker group?")
   echo
   if [[ $answer =~ ^[Yy]$ ]];then
     action "Enabling docker"

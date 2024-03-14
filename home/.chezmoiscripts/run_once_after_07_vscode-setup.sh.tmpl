@@ -5,7 +5,7 @@
 bot "Checking VSCode..."
 echo
 if ! _exists code ; then
-  read -p "Would you like to install vscode? [y/N]" -n 1 -r -s answer
+  answer=$(prompt "Would you like to install vscode?")
   echo
   if [[ $answer =~ ^[Yy]$ ]] ;then
     action "checking if snapd is enabled"

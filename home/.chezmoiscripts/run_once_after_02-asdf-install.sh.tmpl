@@ -4,7 +4,7 @@ install_asdf() {
   bot "Checking asdf..."
   echo
   if ! _exists asdf ; then
-    read -rp "Would you like to install asdf? [y/N]" -n 1 -r -s answer
+    answer=$(prompt "Would you like to install asdf?")
     echo
     if [[ $answer =~ ^[Yy]$ ]] ;then
       action "Cloning git repo..."
@@ -29,7 +29,7 @@ configure_asdf() {
 
 install_asdf_tools() {
   echo
-  read -rp "Would you like to install the languages defined in .tool-versions? [y/N]" -n 1 -r -s answer
+  answer=$(prompt "Would you like to install the languages defined in .tool-versions?")
   echo
   if [[ $answer =~ ^[Yy]$ ]];then
     if cat ~/.tool-versions > /dev/null 2>&1 ;then

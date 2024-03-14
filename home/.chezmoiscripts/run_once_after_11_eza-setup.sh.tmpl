@@ -5,7 +5,7 @@
 bot "Checking eza..."
 echo
 if ! _exists eza ; then
-  read -p "Would you like to install eza? [y/N]" -n 1 -r -s answer
+  answer=$(prompt "Would you like to install eza?")
   echo
   if [[ $answer =~ ^[Yy]$ ]] ;then
     {{ if eq .osid "linux-debian" }}

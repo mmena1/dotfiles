@@ -8,3 +8,4 @@
 [data]
     email = {{ $email | quote }}
     osid = {{ $osid | quote }}
+    environment = {{ env "ENVIRONMENT" | default "dev" | quote }}

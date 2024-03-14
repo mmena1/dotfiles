@@ -2,14 +2,14 @@
 
 bot "Configuring tmux"
 echo
-if [ ! -d "$HOME/.tmux" ] ; then
+if [ ! -d "$HOME/.tmux" ]; then
   if ! _exists git ; then
     warn "git is not installed. Please install git first."
     exit 1
   fi
-  read -p "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git? (I recommend it) [y/N]" -n 1 -r -s answer
+  answer=$(prompt "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git?")
   echo
-  if [[ $answer =~ ^[Yy]$ ]];then
+  if [[ $answer =~ ^[Yy]$ ]]; then
     action "git clone https://github.com/gpakosz/.tmux.git"
     git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux
     ok
