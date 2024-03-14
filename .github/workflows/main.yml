@@ -15,8 +15,5 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - name: Install chezmoi
-        run: sh -c "$(curl -fsLS chezmoi.io/get)"
-
       - name: Initialize chezmoi with the current branch content
-        run: chezmoi init --apply https://github.com/${{ github.repository }}/tree/${{ steps.extract_branch.outputs.branch }}
+        run: sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply https://github.com/${{ github.repository }}/tree/${{ steps.extract_branch.outputs.branch }}
