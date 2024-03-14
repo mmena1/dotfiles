@@ -7,7 +7,6 @@ bot "Checking brew..."
 echo
 if ! _exists brew ; then
   answer=$(prompt "Would you like to install Homebrew?")
-  echo
   if [[ $answer =~ ^[Yy]$ ]] ;then
     action "Installing homebrew..."
     export NONINTERACTIVE=1

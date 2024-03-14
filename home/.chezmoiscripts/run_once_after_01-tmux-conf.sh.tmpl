@@ -8,7 +8,6 @@ if [ ! -d "$HOME/.tmux" ]; then
     exit 1
   fi
   answer=$(prompt "Would you like to install the awesome tmux configuration from https://github.com/gpakosz/.tmux.git?")
-  echo
   if [[ $answer =~ ^[Yy]$ ]]; then
     action "git clone https://github.com/gpakosz/.tmux.git"
     git clone https://github.com/gpakosz/.tmux.git $HOME/.tmux

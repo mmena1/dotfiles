@@ -41,8 +41,10 @@ function error() {
 }
 
 function prompt {
+  local answer
   {{ if eq (env "dev") "true" -}}
   read -rp "$1 [y/N]" -n 1 -r -s answer
+  echo  # Ensure newline after input
   {{ else -}}
   answer="y"
   {{ end -}}

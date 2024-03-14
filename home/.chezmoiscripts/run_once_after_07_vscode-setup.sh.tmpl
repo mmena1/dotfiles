@@ -6,7 +6,6 @@ bot "Checking VSCode..."
 echo
 if ! _exists code ; then
   answer=$(prompt "Would you like to install vscode?")
-  echo
   if [[ $answer =~ ^[Yy]$ ]] ;then
     action "checking if snapd is enabled"
     if systemctl is-active --quiet snapd ;then

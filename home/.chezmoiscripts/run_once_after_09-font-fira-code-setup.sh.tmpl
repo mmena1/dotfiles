@@ -6,7 +6,6 @@ bot "Fira Code setup."
 
 if ! fc-list | grep "Fira code" > /dev/null 2>&1; then
   answer=$(prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?")
-  echo
   if [[ $answer =~ ^[Yy]$ ]]; then
     action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
     wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip
