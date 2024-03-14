@@ -1,5 +1,5 @@
 {{ if eq .environment "dev" -}}
-{{ template "common" }}
+{{ template "common" . -}}
 {{ template "dotfile" }}
 
 bot "This script will guide you through the dofiles setup as well as installing required system packages."

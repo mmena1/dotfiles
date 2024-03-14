@@ -1,5 +1,5 @@
 {{ if eq .environment "dev" -}}
-{{ template "common" }}
+{{ template "common" . -}}
 
 set_ssh_keys() {
   bot "Checking ssh keys..."

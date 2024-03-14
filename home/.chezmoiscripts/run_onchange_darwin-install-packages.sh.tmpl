@@ -1,6 +1,6 @@
 {{ if eq .osid "darwin" -}}
 
-{{ template "common" }}
+{{ template "common" . -}}
 
 brew update
 brew bundle --no-lock --file=/dev/stdin <<EOF
