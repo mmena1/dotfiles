@@ -1,4 +1,4 @@
-{{ if eq .environment "dev" -}}
+{{ if .dev -}}
 {{ template "common" . -}}
 {{ template "dotfile" }}
 

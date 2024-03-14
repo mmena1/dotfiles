@@ -1,14 +1,12 @@
 name: Chezmoi Setup Validation
 
-on:
-  push:
-    branches:
-      - '*'
+on: push
+env:
+  dev: false
 
 jobs:
   validate-chezmoi-setup:
     runs-on: ubuntu-latest
-    environment: CI
     steps:
       - name: Extract branch name
         shell: bash

@@ -40,9 +40,9 @@ function error() {
   echo -e "$COL_RED[error]$COL_RESET "$1
 }
 
-function prompt() {
-  {{ if eq .environment "dev" -}}
-  read -rp $1" [y/N]" -n 1 -r -s answer
+function prompt {
+  {{ if .dev -}}
+  read -rp "$1 [y/N]" -n 1 -r -s answer
   {{ else -}}
   answer="y"
   {{ end -}}
