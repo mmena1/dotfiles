@@ -41,9 +41,9 @@ function error() {
 }
 
 function prompt {
-  local answer
+  local prompt_message=${1:-"Default prompt message"}
   {{ if eq (env "dev") "true" -}}
-  read -rp "$1 [y/N]" -n 1 -r -s answer
+  read -rp "$prompt_message [y/N]" -n 1 -r -s answer
   echo  # Ensure newline after input
   {{ else -}}
   answer="y"
