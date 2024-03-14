@@ -41,7 +41,7 @@ function error() {
 }
 
 function prompt {
-  {{ if .dev -}}
+  {{ if eq (env "dev") "true" -}}
   read -rp "$1 [y/N]" -n 1 -r -s answer
   {{ else -}}
   answer="y"
