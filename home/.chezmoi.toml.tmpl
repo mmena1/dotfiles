@@ -1,4 +1,4 @@
-{{- $emil := "example@email.com" -}}
+{{- $email := "example@email.com" -}}
 {{- if eq (env "ENVIRONMENT") "dev" -}}
 {{-   $email = promptStringOnce . "email" "Email address" -}}
 {{- end -}}
