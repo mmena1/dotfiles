@@ -1,8 +1,6 @@
 name: Chezmoi Setup Validation
 
 on: push
-env:
-  dev: false
 
 jobs:
   validate-chezmoi-setup:
@@ -14,4 +12,4 @@ jobs:
         id: extract_branch
 
       - name: Initialize chezmoi with the current branch content
-        run: sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}
+        run: dev=false sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}
