@@ -1,4 +1,7 @@
-{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $emil := "example@email.com" -}}
+{{- if eq (env "ENVIRONMENT") "dev" -}}
+{{-   $email = promptStringOnce . "email" "Email address" -}}
+{{- end -}}
 {{- $osid := .chezmoi.os -}}
 
 {{- if hasKey .chezmoi.osRelease "idLike" -}}
