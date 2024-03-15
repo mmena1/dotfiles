@@ -4,11 +4,11 @@
 
 bot "Updating apt packages"
 
-sudo apt-get -qq update
+sudo apt-get -qq update > /dev/null
 
 {{ range .packages.debian.apt -}}
 action "Installing {{ . | quote }}..."
-sudo apt-get -qq install -y {{ . | quote }}
+sudo apt-get -qq install -y {{ . | quote }} > /dev/null
 {{ end -}}
 
 ok
