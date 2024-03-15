@@ -18,7 +18,7 @@ COL_CYAN=$ESC_SEQ"36;01m"
 
 function ok() {
   local message=${1:-" "}
-  echo -e "$COL_GREEN[ok]$COL_RESET "message
+  echo -e "$COL_GREEN[ok]$COL_RESET "$message
 }
 
 function bot() {
