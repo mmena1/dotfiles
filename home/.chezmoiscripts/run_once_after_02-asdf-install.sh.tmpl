@@ -5,9 +5,13 @@ install_asdf() {
   echo
   if ! _exists asdf ; then
     answer=$(prompt "Would you like to install asdf?")
-    if [[ $answer =~ ^[Yy]$ ]] ;then
-      action "Cloning git repo..."
-      git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 && source ~/.asdf/asdf.sh || { echo "Failed to clone asdf repository"; exit 1; }
+    if [[ $answer =~ ^[Yy]$ ]]; then
+      if [[ ! -d ~/.asdf ]]; then
+        action "Cloning git repo..."
+        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 && source ~/.asdf/asdf.sh || { echo "Failed to clone asdf repository"; exit 1; }
+      else
+        ok "asdf dir already exists, skipping cloning"
+      fi
     else
       ok "Skipping"
     fi
