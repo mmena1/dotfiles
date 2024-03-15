@@ -1,11 +1,11 @@
-{{ template "common" }}
-
+{{ if eq (env "dev") "true" -}}
+{{ template "common" . -}}
 {{ template "dotfile" }}
 
 bot "This script will guide you through the dofiles setup as well as installing required system packages."
 echo "It will not install anything without your direct agreement!"
 echo
-read -p "Do you want to proceed with the installation? [y/N] " -n 1 -r -s answer
+answer=$(prompt "Do you want to proceed with the installation?")
 echo
 if [[ ! $answer =~ ^[Yy]$ ]];then
   exit 1
@@ -13,8 +13,9 @@ fi
 
 bot "Setting dotfiles up on the home folder."
 echo
-read -p "Proceed? [y/N] " -n 1 -r -s answer
-echo
+answer=$(prompt "Proceed?")
 if [[ ! $answer =~ ^[Yy]$ ]];then
   exit 1
 fi
+
+{{ end -}}

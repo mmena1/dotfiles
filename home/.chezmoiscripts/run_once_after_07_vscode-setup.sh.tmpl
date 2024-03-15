@@ -1,12 +1,11 @@
 {{ if eq .chezmoi.os "linux" -}}
 
-{{ template "common" }}
+{{ template "common" . -}}
 
 bot "Checking VSCode..."
 echo
 if ! _exists code ; then
-  read -p "Would you like to install vscode? [y/N]" -n 1 -r -s answer
-  echo
+  answer=$(prompt "Would you like to install vscode?")
   if [[ $answer =~ ^[Yy]$ ]] ;then
     action "checking if snapd is enabled"
     if systemctl is-active --quiet snapd ;then

@@ -1,0 +1,32 @@
+name: Chezmoi Setup Validation
+
+on:
+  push:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
+
+env:
+  dev: "false"
+
+jobs:
+  validate-chezmoi-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Cache asdf tools
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+      
+
+      - name: Initialize chezmoi with the current branch content
+        run: sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}

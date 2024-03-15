@@ -1,12 +1,11 @@
 {{ if eq .chezmoi.os "linux" -}}
 
-{{ template "common" }}
+{{ template "common" . -}}
 
 bot "Checking eza..."
 echo
 if ! _exists eza ; then
-  read -p "Would you like to install eza? [y/N]" -n 1 -r -s answer
-  echo
+  answer=$(prompt "Would you like to install eza?")
   if [[ $answer =~ ^[Yy]$ ]] ;then
     {{ if eq .osid "linux-debian" }}
     action "Adding key for apt repo..."
@@ -16,7 +15,7 @@ if ! _exists eza ; then
     action "Setting permissions..."
     sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
     action "Installing..."
-    sudo apt update && sudo apt install -y eza
+    sudo apt -qq update > /dev/null && sudo apt -qq install -y eza > /dev/null
     {{ end }}
   else
     ok "Skipping"

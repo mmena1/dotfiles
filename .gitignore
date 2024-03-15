@@ -1,6 +1,6 @@
 **/fish_variables
 home/bundle/cache
-config/gtk-3.0/bookmarks
+**/gtk-3.0/bookmarks
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
