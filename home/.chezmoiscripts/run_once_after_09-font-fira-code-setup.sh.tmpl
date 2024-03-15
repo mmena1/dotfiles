@@ -1,20 +1,20 @@
-{{ if eq .chezmoi.os "linux" -}}
+{{ if eq .chezmoi.os "linux" }}
 
-{{ template "common" . -}}
+{{ template "common" . }}
 
 bot "Fira Code setup."
 
-if ! fc-list | grep "Fira code" > /dev/null 2>&1; then
+if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
   answer=$(prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?")
   if [[ $answer =~ ^[Yy]$ ]]; then
     action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip
+    wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip && \
     if [ -f "FiraCode.zip" ]; then
       action "Unzipping and adding to ~/.fonts..."
-      unzip FiraCode.zip -d ~/.fonts
-      fc-cache -fv
-      action "rm -rf FiraCode.zip"
-      rm -rf FiraCode.zip
+      unzip -q FiraCode.zip -d ~/.fonts && \
+      fc-cache -f > /dev/null
+      action "Cleaning up..."
+      rm -f FiraCode.zip
     else
       error "Download failed. FiraCode.zip not found."
       exit 1
@@ -26,4 +26,4 @@ else
   ok "Fira Code already installed!"
 fi
 
-{{ end -}}
+{{ end }}

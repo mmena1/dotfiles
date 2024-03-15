@@ -1,11 +1,16 @@
 {{ if eq .osid "linux-debian" -}}
-#!/bin/bash
-set -e
-sudo apt-get update
+
+{{ template "common" . -}}
+
+bot "Updating apt packages"
+
+sudo apt-get -qq update
 
 {{ range .packages.debian.apt -}}
-echo "Installing {{ . | quote }}..."
-sudo apt-get install -y {{ . | quote }}
+action "Installing {{ . | quote }}..."
+sudo apt-get -qq install -y {{ . | quote }}
 {{ end -}}
+
+ok
 
 {{ end -}}

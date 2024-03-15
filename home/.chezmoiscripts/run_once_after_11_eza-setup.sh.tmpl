@@ -15,7 +15,7 @@ if ! _exists eza ; then
     action "Setting permissions..."
     sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
     action "Installing..."
-    sudo apt update && sudo apt install -y eza
+    sudo apt -qq update && sudo apt -qq install -y eza
     {{ end }}
   else
     ok "Skipping"
