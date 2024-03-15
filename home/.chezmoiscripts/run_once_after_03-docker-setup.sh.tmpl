@@ -1,11 +1,8 @@
+{{ if eq (env "dev") "true" -}}
 {{ template "common" . -}}
 
 bot "Docker"
 echo
-if [ "$(id -u)" != "0" ]; then
-  echo "This script must be run as root" 1>&2
-  exit 1
-fi
 if _exists docker && ! systemctl is-enabled --quiet docker ;then
   answer=$(prompt "Enable docker and add your user to the docker group?")
   if [[ $answer =~ ^[Yy]$ ]];then
@@ -25,3 +22,4 @@ if _exists docker && ! systemctl is-enabled --quiet docker ;then
 else
   ok "Docker already enabled!"
 fi
+{{ end -}}
