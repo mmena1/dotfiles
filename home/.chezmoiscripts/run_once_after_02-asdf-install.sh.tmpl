@@ -8,9 +8,10 @@ install_asdf() {
     if [[ $answer =~ ^[Yy]$ ]]; then
       if [[ ! -d ~/.asdf ]]; then
         action "Cloning git repo..."
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 && source ~/.asdf/asdf.sh || { echo "Failed to clone asdf repository"; exit 1; }
+        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 || { echo "Failed to clone asdf repository"; exit 1; }
       else
         ok "asdf dir already exists, skipping cloning"
+        source ~/.asdf/asdf.sh
       fi
     else
       ok "Skipping"
