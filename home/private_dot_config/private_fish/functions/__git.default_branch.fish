@@ -1,14 +1,20 @@
-# Reference:
-# https://github.com/jhillyerd/plugin-git/blob/master/functions/__git.default_branch.fish
+function __git.default_branch
+    # Get the remote name, defaulting to 'origin'
+    set -l remote (git remote show | head -n 1)
+    if test -z "$remote"
+        echo "No remote found"
+        return 1
+    end
 
-function __git.default_branch -d "Use init.defaultBranch if it's set and exists, otherwise use main if it exists. Falls back to master"
-  command git rev-parse --git-dir &>/dev/null; or return
-  if set -l default_branch (command git config --get init.defaultBranch)
-    and command git show-ref -q --verify refs/heads/{$default_branch}
+    # Fetch remote information to ensure we have the latest default branch info
+    git remote update $remote --prune
+
+    # Get the default branch from the remote
+    set -l default_branch (git remote show $remote | grep 'HEAD branch' | sed 's/.*: //')
+    if test -z "$default_branch"
+        echo "Could not determine the default branch"
+        return 1
+    end
+
     echo $default_branch
-  else if command git show-ref -q --verify refs/heads/main
-    echo main
-  else
-    echo master
-  end
 end

@@ -43,16 +43,15 @@ function error() {
 
 function prompt {
   local prompt_message=${1:-"Default prompt message"}
-  {{ if eq (env "dev") "true" -}}
-  read -rp "$prompt_message [y/N]" -n 1 -r -s answer
+  {{ if eq .dev "true" -}}
+  read -p "$prompt_message [y/N]" -n 1 -r -s answer
   echo  # Ensure newline after input
-  {{ else -}}
-  answer="y"
-  {{ end -}}
-
   if [[ $answer =~ ^[Yy]$ ]]; then
-    echo "y"
+    return 0  # Indicative of 'yes'
   else
-    echo "n"
+    return 1  # Indicative of 'no' or any input other than 'y'
   fi
+  {{ else -}}
+  return 0
+  {{ end -}}
 }

@@ -5,8 +5,7 @@
 bot "Checking brew..."
 echo
 if ! _exists brew ; then
-  answer=$(prompt "Would you like to install Homebrew?")
-  if [[ $answer =~ ^[Yy]$ ]] ;then
+  if prompt "Would you like to install Homebrew?" ;then
     action "Installing homebrew..."
     export NONINTERACTIVE=1
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
