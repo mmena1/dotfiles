@@ -19,7 +19,7 @@ function __git.default_branch
     # cleaning up any references that doesn't exist anymore.
     git remote update $remote --prune
 
-    # Get the default branch from the remote
+    # Extract the default branch name from the 'HEAD branch' line of the 'git remote show' output
     set -l default_branch (git remote show $remote | grep 'HEAD branch' | sed 's/.*: //')
     if test -z "$default_branch"
         echo "Could not determine the default branch from remote, defaulting to '$git_default_branch'"
