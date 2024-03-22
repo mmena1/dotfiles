@@ -1,11 +1,10 @@
-{{ if eq (env "dev") "true" -}}
+{{ if eq .dev "true" -}}
 {{ template "common" . -}}
 
 bot "Docker"
 echo
 if _exists docker && ! systemctl is-enabled --quiet docker ;then
-  answer=$(prompt "Enable docker and add your user to the docker group?")
-  if [[ $answer =~ ^[Yy]$ ]];then
+  if prompt "Enable docker and add your user to the docker group?";then
     action "Enabling docker"
     sudo systemctl enable --now docker.service
     ok

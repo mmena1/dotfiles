@@ -1,12 +1,11 @@
-{{ if eq (env "dev") "true" -}}
+{{ if eq .dev "true" -}}
 {{ template "common" . -}}
 
 set_ssh_keys() {
   bot "Checking ssh keys..."
   echo
   if [ ! -f ~/.ssh/id_ed25519 ] ; then
-    answer=$(prompt "Would you like to set ssh keys now?")
-    if [[ $answer =~ ^[Yy]$ ]] ; then
+    if prompt "Would you like to set ssh keys now?" ; then
       echo "Setting ssh keys using the ed25519 algorithm."
       read -rp "Enter the passphrase: (empty for no passphrase)" passphrase
       action "ssh-keygen -t ed25519 -C {{- .email }} -q -N \"$passphrase\""
@@ -21,8 +20,7 @@ set_ssh_keys() {
 
 set_github_ssh_key() {
   if [ -f ~/.ssh/id_ed25519 ] && _exists gh ; then
-    answer=$(prompt "Would you like to set your public ssh key to your gh account?")
-    if [[ $answer =~ ^[Yy]$ ]] ; then
+    if prompt "Would you like to set your public ssh key to your gh account?" ; then
       action "Adding SSH key to GitHub account"
       gh ssh-key add ~/.ssh/id_ed25519.pub -t "$(hostname)"
     else
@@ -33,7 +31,7 @@ set_github_ssh_key() {
 
 main() {
   set_ssh_keys "$*"
-  set_ghithub_ssh_key "$*"
+  set_github_ssh_key "$*"
 }
 
 main "$*"

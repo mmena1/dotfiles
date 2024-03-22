@@ -1,5 +1,6 @@
+{{- $dev := or (env "dev") "true" -}}
 {{- $email := "example@email.com" -}}
-{{- if eq (env "dev") "true" -}}
+{{- if eq $dev "true" -}}
 {{-   $email = promptStringOnce . "email" "Email address" -}}
 {{- end -}}
 {{- $osid := .chezmoi.os -}}
@@ -11,3 +12,4 @@
 [data]
     email = {{ $email | quote }}
     osid = {{ $osid | quote }}
+    dev = {{ $dev | quote }}
