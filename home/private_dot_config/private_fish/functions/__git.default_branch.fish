@@ -1,19 +1,30 @@
 function __git.default_branch
+    # Attempt to get the global default branch name from Git configuration
+    set -l git_default_branch (git config --get init.defaultBranch)
+    if test -z "$git_default_branch"
+        # If not configured, default to 'main'
+        set git_default_branch "main"
+    end
+
     # Get the remote name, defaulting to 'origin'
     set -l remote (git remote show | head -n 1)
     if test -z "$remote"
-        echo "No remote found"
-        return 1
+        # If no remote is found, use the configured default branch or 'main'
+        echo "No remote found, defaulting to '$git_default_branch'"
+        echo $git_default_branch
+        return
     end
 
-    # Fetch remote information to ensure we have the latest default branch info
+    # Fetch remote information to ensure we have the latest default branch info, 
+    # cleaning up any references that doesn't exist anymore.
     git remote update $remote --prune
 
     # Get the default branch from the remote
     set -l default_branch (git remote show $remote | grep 'HEAD branch' | sed 's/.*: //')
     if test -z "$default_branch"
-        echo "Could not determine the default branch"
-        return 1
+        echo "Could not determine the default branch from remote, defaulting to '$git_default_branch'"
+        echo $git_default_branch
+        return
     end
 
     echo $default_branch
