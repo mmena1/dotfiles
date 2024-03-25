@@ -16,8 +16,8 @@ function __git.default_branch
     end
 
     # Fetch remote information to ensure we have the latest default branch info, 
-    # cleaning up any references that doesn't exist anymore.
-    git remote update $remote --prune
+    # cleaning up any references that doesn't exist anymore, while suppressing direct output
+    git remote update $remote --prune > /dev/null 2>&1
 
     # Extract the default branch name from the 'HEAD branch' line of the 'git remote show' output
     set -l default_branch (git remote show $remote | grep 'HEAD branch' | sed 's/.*: //')
