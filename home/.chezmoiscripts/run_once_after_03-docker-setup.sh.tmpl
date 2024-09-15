@@ -1,24 +1,58 @@
-{{ if eq .dev "true" -}}
+{{ if (and (eq .dev "true") (eq .osid "linux-debian")) -}}
 {{ template "common" . -}}
 
-bot "Docker"
-echo
-if _exists docker && ! systemctl is-enabled --quiet docker ;then
-  if prompt "Enable docker and add your user to the docker group?";then
-    action "Enabling docker"
-    sudo systemctl enable --now docker.service
-    ok
-    if ! groups | grep -q docker; then
-      action "Adding user to the docker group"
-      sudo gpasswd -a $LOGNAME docker
-      ok
+install_docker() {
+  bot "Checking Docker"
+  echo
+  if ! _exists docker ; then
+    if prompt "Would you like to install Docker?"; then
+      action "Adding Docker official GPG key"
+      sudo apt-get install ca-certificates curl
+      sudo install -m 0755 -d /etc/apt/keyrings
+      sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+      action "Adding Docker repository to apt sources"
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      action "Updating apt packages with the new Docker repository"
+      sudo apt-get update
+      action "Installing Docker"
+      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     else
-      ok "User is already a member of the docker group"
+      ok "Skipping"
+    fi
+}
+
+configure_docker() {
+  bot "Confguring Docker"
+  echo
+  if _exists docker && ! systemctl is-enabled --quiet docker ;then
+    if prompt "Enable docker and add your user to the docker group?";then
+      action "Enabling docker"
+      sudo systemctl enable --now docker.service
+      ok
+      if ! groups | grep -q docker; then
+        action "Adding user to the docker group"
+        sudo gpasswd -a $LOGNAME docker
+        ok
+      else
+        ok "User is already a member of the docker group"
+      fi
+    else
+      ok "Skipping"
     fi
   else
-    ok "Skipping"
+    ok "Docker already enabled!"
   fi
-else
-  ok "Docker already enabled!"
-fi
+}
+
+main() {
+  install_docker "$*"
+  configure_docker "$*"
+}
+
+main "$*"
 {{ end -}}

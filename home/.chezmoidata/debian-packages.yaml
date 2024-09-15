@@ -4,8 +4,6 @@ packages:
     - 'build-essential'
     - 'bat'
     - 'cmake'
-    - 'docker'
-    - 'docker-compose'
     - 'fish'
     - 'htop'
     - 'fonts-noto-color-emoji'
