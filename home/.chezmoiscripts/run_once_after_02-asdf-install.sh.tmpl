@@ -8,6 +8,7 @@ install_asdf() {
       if [[ ! -d ~/.asdf ]]; then
         action "Cloning git repo..."
         git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 || { echo "Failed to clone asdf repository"; exit 1; }
+        source ~/.asdf/asdf.sh
       else
         ok "asdf dir already exists, skipping cloning"
         source ~/.asdf/asdf.sh
