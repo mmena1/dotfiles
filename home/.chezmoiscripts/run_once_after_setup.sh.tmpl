@@ -105,9 +105,9 @@ register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
 register_task "starship" "Configure Starship prompt" "packages" setup_starship
 register_task "fonts" "Setup fonts" "packages" setup_fonts
 {{ if eq .dev "true" -}}
-register_task "local" "Local setup" "fish,tmux,tools,docker,ssh,git,vscode,starship,fonts" local_setup
+register_task "local" "Local setup" "fish,tmux,tools,docker,ssh,vscode,starship,fonts" local_setup
 {{ end -}}
-register_task "finish" "Finish setup" "fish,tmux,tools,docker,ssh,git,vscode,starship,fonts" finish_setup
+register_task "finish" "Finish setup" "fish,tmux,tools,docker,ssh,vscode,starship,fonts" finish_setup
 
 # Execute all tasks
 if ! execute_tasks; then

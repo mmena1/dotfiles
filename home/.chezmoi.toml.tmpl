@@ -1,11 +1,12 @@
 {{- $email := "example@email.com" -}}
-{{- if (env "dev") | or (promptBoolOnce "Configure email?") -}}
+{{- $dev := (env "dev") | default "true" | eq "true" -}}
+{{- if or $dev (promptBoolOnce "email" "Configure email?" true) -}}
   {{- $email = promptStringOnce "email" "Enter your email:" -}}
 {{- end -}}
 
 [data]
   email = {{ $email | quote }}
-  dev = {{ (env "dev") | default "true" | quote }}
+  dev = {{ $dev | quote }}
 
 # Package configuration
 [data.packages]
@@ -20,7 +21,7 @@ casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
 [data.packages.debian]
 apt = ["build-essential", "bat", "cmake", "htop", "fonts-noto-color-emoji", 
        "powerline", "fonts-powerline", "tree", "fonts-firacode", 
-       "vim", "xclip", "curl", "git"]
+       "vim", "xclip"]
 
 # Task configuration
 [data.tasks]
