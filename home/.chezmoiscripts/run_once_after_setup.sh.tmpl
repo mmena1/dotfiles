@@ -28,7 +28,26 @@ setup_homebrew() {
   
   if ! _exists brew; then
     action "Installing Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || return 1
+    # Download script first
+    local brew_install_script=$(mktemp)
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brew_install_script"
+    
+    # Verify script exists and has content
+    if [[ ! -s "$brew_install_script" ]]; then
+      error "Failed to download Homebrew installation script"
+      rm -f "$brew_install_script"
+      return 1
+    fi
+    
+    # Execute the script
+    /bin/bash "$brew_install_script" || { 
+      error "Homebrew installation failed"
+      rm -f "$brew_install_script"
+      return 1
+    }
+    
+    # Clean up
+    rm -f "$brew_install_script"
   else
     ok "Homebrew already installed"
   fi
@@ -112,4 +131,10 @@ register_task "fonts" "Setup fonts" "packages" setup_fonts
 register_task "finish" "Finish setup" "fish,tmux,tools,docker,ssh,git,vscode,starship,fonts" finish_setup
 
 # Execute all tasks
-execute_tasks
+# Execute all tasks
+if ! execute_tasks; then
+  error "Setup failed. Please check the logs for errors."
+  exit 1
+else
+  ok "All tasks completed successfully."
+fi

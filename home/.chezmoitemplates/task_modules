@@ -166,6 +166,16 @@ shell_module() {
     # Ensure config directory exists
     mkdir -p ~/.config
     
+    # Create default configuration if it doesn't exist
+    if [[ ! -f ~/.config/starship.toml ]]; then
+      action "Creating Starship configuration"
+      # Either copy from template or generate minimal config
+      starship preset minimal > ~/.config/starship.toml || {
+        error "Failed to create Starship configuration"
+        return 1
+      }
+    fi
+    
     ok "Starship configured"
     return 0
   }
@@ -178,7 +188,8 @@ devtools_module() {
     if [[ ! -f ~/.ssh/id_ed25519 ]]; then
       if prompt "Generate new SSH key?"; then
         action "Generating SSH key"
-        ssh-keygen -t ed25519 -C "{{ .email }}" -f ~/.ssh/id_ed25519 -N ""
+        # Prompt for passphrase instead of using empty one
+        ssh-keygen -t ed25519 -C "{{ .email }}" -f ~/.ssh/id_ed25519
         # Start ssh-agent
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/id_ed25519
@@ -248,7 +259,14 @@ docker_module() {
     # Start Docker service on Linux
     if [[ "$OSTYPE" != "darwin"* ]]; then
       action "Ensuring Docker is running"
-      sudo systemctl enable --now docker
+      # Check which service manager is available
+      if command -v systemctl &>/dev/null; then
+        sudo systemctl enable --now docker
+      elif command -v service &>/dev/null; then
+        sudo service docker start
+      else
+        warn "Could not determine how to start Docker service"
+      fi
       
       # Add user to docker group
       if ! groups | grep -q docker; then
@@ -256,6 +274,7 @@ docker_module() {
         sudo usermod -aG docker "$USER"
         warn "You may need to log out and back in for this to take effect"
       fi
+    fi
     fi
     
     ok "Docker configured"
