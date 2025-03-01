@@ -1,6 +1,6 @@
 # Martin Mena's Dotfiles
 
-![main workflow](https://github.com/mmena1/dotfiles/actions/workflows/main.yml/badge.svg?event=push)
+[![CI Status](https://github.com/mmena1/dotfiles/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/mmena1/dotfiles/actions/workflows/main.yml?query=branch%3Amain+event%3Apush+workflow%3A%22Chezmoi+Setup+Validation%22)
 
 Welcome to my personal dotfiles repository, tailored for the 🐟 [Fish shell](https://fishshell.com/). These configurations are designed to streamline your development environment, integrating seamlessly with VSCode, Docker, and various programming languages via [.tool-versions](home/dot_tool-versions) through asdf. Dive into a setup that's both efficient and enjoyable to use, regardless of your expertise level.
 

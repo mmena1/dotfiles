@@ -13,3 +13,32 @@
     email = {{ $email | quote }}
     osid = {{ $osid | quote }}
     dev = {{ $dev | quote }}
+
+# Package configuration - populated from .chezmoidata
+[data.packages]
+    # Common packages for all systems
+    common = ["git", "fish", "tmux", "curl"]
+    
+    # Darwin-specific packages
+    darwin:
+        brews = ["starship", "fish", "eza", "tmux", "gh", "bat"]
+        taps = ["homebrew/cask-fonts"]
+        casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
+    
+    # Debian-specific packages  
+    debian:
+        apt = ["build-essential", "bat", "cmake", "fish", "htop", "fonts-noto-color-emoji", 
+               "powerline", "fonts-powerline", "tmux", "tree", "fonts-firacode", 
+               "vim", "xclip", "curl", "git"]
+
+# Task configuration
+[data.tasks]
+    # Enable or disable specific setup tasks
+    tmux = true
+    asdf = true
+    docker = true
+    ssh = true
+    vscode = true
+    starship = true
+    onepassword = false
+    gitcli = true

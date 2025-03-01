@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+
+# Task modules for common installation functions
+# This template provides modular installation functions
+
+# System package installation module
+package_module() {
+  # Detect OS and package manager
+  local os_type
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    os_type="darwin"
+  elif [[ -f /etc/debian_version ]]; then
+    os_type="debian"
+  else
+    os_type="unknown"
+  fi
+
+  # Install packages based on OS
+  install_packages() {
+    if [[ "$os_type" == "darwin" ]]; then
+      install_macos_packages
+    elif [[ "$os_type" == "debian" ]]; then
+      install_debian_packages
+    else
+      error "Unsupported OS for package installation"
+      return 1
+    fi
+    return 0
+  }
+  
+  # Install macOS packages with Homebrew
+  install_macos_packages() {
+    action "Installing macOS packages with Homebrew"
+    if ! _exists brew; then
+      error "Homebrew not installed"
+      return 1
+    fi
+    
+    # Install brew taps
+    for tap in {{ join .packages.darwin.taps " " }}; do
+      running "Adding tap: $tap"
+      brew tap "$tap" || warn "Failed to tap $tap"
+    done
+    
+    # Install brew formulae
+    for pkg in {{ join .packages.darwin.brews " " }}; do
+      running "brew install $pkg"
+      brew install "$pkg" || warn "Failed to install $pkg"
+    done
+    
+    # Install casks
+    for cask in {{ join .packages.darwin.casks " " }}; do
+      running "brew install --cask $cask"
+      brew install --cask "$cask" || warn "Failed to install cask $cask"
+    done
+    
+    return 0
+  }
+  
+  # Install Debian packages with apt
+  install_debian_packages() {
+    action "Installing Debian packages with apt"
+    sudo apt-get update
+    
+    for pkg in {{ join .packages.debian.apt " " }}; do
+      running "apt install $pkg"
+      sudo apt-get install -y "$pkg" || warn "Failed to install $pkg"
+    done
+    
+    return 0
+  }
+}
+
+# ASDF module
+asdf_module() {
+  # Install ASDF version manager
+  install_asdf() {
+    if ! _exists asdf; then
+      action "Installing ASDF version manager"
+      if [[ ! -d ~/.asdf ]]; then
+        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 || return 1
+        source ~/.asdf/asdf.sh
+      else
+        ok "ASDF directory already exists"
+        source ~/.asdf/asdf.sh
+      fi
+    else
+      ok "ASDF already installed"
+    fi
+    return 0
+  }
+  
+  # Install tools defined in .tool-versions
+  install_asdf_tools() {
+    if ! _exists asdf; then
+      error "ASDF not installed"
+      return 1
+    fi
+    
+    if [[ ! -f ~/.tool-versions ]]; then
+      error "~/.tool-versions not found"
+      return 1
+    fi
+    
+    while read -r line; do
+      # get the first word of the line
+      tool_name=$(echo $line | awk '{print $1;}')
+      running "$tool_name"
+      
+      # is language already installed?
+      if ! asdf where $tool_name > /dev/null 2>&1; then
+        # does the plugin exist in the remote repos?
+        if asdf plugin list all | grep -E "^$tool_name\s" > /dev/null 2>&1; then
+          # is the plugin not installed already?
+          if ! asdf plugin list | grep "$tool_name" > /dev/null 2>&1; then
+            action "asdf plugin-add $tool_name"
+            asdf plugin-add $tool_name
+          fi
+          action "Installing $tool_name"
+          asdf install $tool_name || error "Couldn't install $tool_name"
+        else
+          error "Plugin $tool_name does not exist"
+        fi
+      else
+        ok "$tool_name already installed"
+      fi
+    done < ~/.tool-versions
+    
+    return 0
+  }
+}
+
+# Shell setup module
+shell_module() {
+  # Configure Fish shell
+  setup_fish() {
+    if ! _exists fish; then
+      error "Fish shell not installed"
+      return 1
+    fi
+    
+    # Add fish to /etc/shells if not already there
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      local fish_path=$(which fish)
+      if ! grep -q "$fish_path" /etc/shells; then
+        action "Adding Fish to /etc/shells"
+        echo "$fish_path" | sudo tee -a /etc/shells
+      fi
+    fi
+    
+    # Make Fish the default shell if requested
+    if prompt "Set Fish as default shell?"; then
+      chsh -s "$(which fish)" || error "Failed to set Fish as default shell"
+    fi
+    
+    return 0
+  }
+  
+  # Setup Starship prompt
+  setup_starship() {
+    if ! _exists starship; then
+      error "Starship not installed"
+      return 1
+    fi
+    
+    # Ensure config directory exists
+    mkdir -p ~/.config
+    
+    ok "Starship configured"
+    return 0
+  }
+}
+
+# Dev tools module
+devtools_module() {
+  # Setup SSH keys
+  setup_ssh_keys() {
+    if [[ ! -f ~/.ssh/id_ed25519 ]]; then
+      if prompt "Generate new SSH key?"; then
+        action "Generating SSH key"
+        ssh-keygen -t ed25519 -C "{{ .email }}" -f ~/.ssh/id_ed25519 -N ""
+        # Start ssh-agent
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_ed25519
+        ok "SSH key generated"
+      fi
+    else
+      ok "SSH key already exists"
+    fi
+    return 0
+  }
+  
+  # Setup Git
+  setup_git() {
+    if ! _exists git; then
+      error "Git not installed"
+      return 1
+    fi
+    
+    # Git config is handled by chezmoi template
+    ok "Git configured via template"
+    return 0
+  }
+  
+  # Setup VSCode
+  setup_vscode() {
+    if ! _exists code; then
+      error "VSCode not installed"
+      return 1
+    fi
+    
+    # Install extensions
+    local extensions="ms-vscode.vscode-typescript-next dbaeumer.vscode-eslint esbenp.prettier-vscode"
+    for ext in $extensions; do
+      running "Installing VSCode extension: $ext"
+      code --install-extension "$ext" --force || warn "Failed to install $ext"
+    done
+    
+    ok "VSCode configured"
+    return 0
+  }
+  
+  # Setup Fonts
+  setup_fonts() {
+    action "Setting up fonts"
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # Font installation for macOS handled via Homebrew casks
+      ok "Fonts installed via Homebrew"
+    else
+      # For Linux, fonts should already be installed via apt packages
+      ok "Fonts installed via package manager"
+    fi
+    
+    return 0
+  }
+}
+
+# Docker module
+docker_module() {
+  # Setup Docker
+  setup_docker() {
+    if ! _exists docker; then
+      error "Docker not installed"
+      return 1
+    fi
+    
+    # Start Docker service on Linux
+    if [[ "$OSTYPE" != "darwin"* ]]; then
+      action "Ensuring Docker is running"
+      sudo systemctl enable --now docker
+      
+      # Add user to docker group
+      if ! groups | grep -q docker; then
+        action "Adding user to docker group"
+        sudo usermod -aG docker "$USER"
+        warn "You may need to log out and back in for this to take effect"
+      fi
+    fi
+    
+    ok "Docker configured"
+    return 0
+  }
+}
