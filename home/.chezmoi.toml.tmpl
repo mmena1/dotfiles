@@ -1,33 +1,27 @@
-{{- $dev := or (env "dev") "true" -}}
 {{- $email := "example@email.com" -}}
-{{- if eq $dev "true" -}}
-{{-   $email = promptStringOnce . "email" "Email address" -}}
-{{- end -}}
-{{- $osid := .chezmoi.os -}}
-
-{{- if hasKey .chezmoi.osRelease "idLike" -}}
-{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.idLike -}}
+{{- if (env "dev") | or (promptBoolOnce "Configure email?") -}}
+  {{- $email = promptStringOnce "email" "Enter your email:" -}}
 {{- end -}}
 
 [data]
-    email = {{ $email | quote }}
-    osid = {{ $osid | quote }}
-    dev = {{ $dev | quote }}
+  email = {{ $email | quote }}
+  dev = {{ (env "dev") | default "true" | quote }}
 
-# Package configuration - populated from .chezmoidata
+# Package configuration
 [data.packages]
     # Common packages for all systems
-    common = ["git", "fish", "tmux", "curl"]
+    common = ["git", "fish", "tmux", "curl", "ripgrep"]
 
 [data.packages.darwin]
-brews = ["starship", "fish", "eza", "tmux", "gh", "bat"]
+brews = ["starship", "eza", "gh", "bat"]
 taps = ["homebrew/cask-fonts"]
 casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
 
 [data.packages.debian]
-apt = ["build-essential", "bat", "cmake", "fish", "htop", "fonts-noto-color-emoji", 
-       "powerline", "fonts-powerline", "tmux", "tree", "fonts-firacode", 
+apt = ["build-essential", "bat", "cmake", "htop", "fonts-noto-color-emoji", 
+       "powerline", "fonts-powerline", "tree", "fonts-firacode", 
        "vim", "xclip", "curl", "git"]
+
 # Task configuration
 [data.tasks]
     # Enable or disable specific setup tasks

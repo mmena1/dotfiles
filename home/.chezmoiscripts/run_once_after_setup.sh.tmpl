@@ -10,6 +10,7 @@ asdf_module
 shell_module
 devtools_module
 docker_module
+local_module
 
 # Setup intro
 setup_intro() {
@@ -54,30 +55,6 @@ setup_homebrew() {
   return 0
 }
 
-# Install system packages
-install_system_packages() {
-  local os_type
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    os_type="darwin"
-  elif [[ -f /etc/debian_version ]]; then
-    os_type="debian"
-  else
-    os_type="unknown"
-  fi
-  
-  # Install common packages
-  install_packages "{{ join .packages.common " " }}" "common"
-  
-  # Install OS-specific packages
-  if [[ "$os_type" == "darwin" ]]; then
-    install_packages "{{ join .packages.darwin " " }}" "macOS"
-  elif [[ "$os_type" == "debian" ]]; then
-    install_packages "{{ join .packages.debian " " }}" "Debian"
-  fi
-  
-  return 0
-}
-
 # Tmux configuration
 setup_tmux() {
   if ! _exists tmux; then
@@ -117,20 +94,21 @@ finish_setup() {
 # Format: register_task "task_id" "description" "dependency1,dependency2" function_name
 register_task "intro" "Introduction" "none" setup_intro
 register_task "homebrew" "Install Homebrew (macOS)" "intro" setup_homebrew
-register_task "packages" "Install system packages" "homebrew" install_system_packages
+register_task "packages" "Install system packages" "homebrew" install_packages
 register_task "fish" "Configure Fish shell" "packages" setup_fish
 register_task "tmux" "Setup Tmux configuration" "packages" setup_tmux
 register_task "asdf" "Install ASDF version manager" "packages" install_asdf
 register_task "tools" "Install tools from .tool-versions" "asdf" install_asdf_tools
 register_task "docker" "Configure Docker" "packages" setup_docker
 register_task "ssh" "Setup SSH keys" "intro" setup_ssh_keys
-register_task "git" "Configure Git" "packages" setup_git
 register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
 register_task "starship" "Configure Starship prompt" "packages" setup_starship
 register_task "fonts" "Setup fonts" "packages" setup_fonts
+{{ if eq .dev "true" -}}
+register_task "local" "Local setup" "fish,tmux,tools,docker,ssh,git,vscode,starship,fonts" local_setup
+{{ end -}}
 register_task "finish" "Finish setup" "fish,tmux,tools,docker,ssh,git,vscode,starship,fonts" finish_setup
 
-# Execute all tasks
 # Execute all tasks
 if ! execute_tasks; then
   error "Setup failed. Please check the logs for errors."
