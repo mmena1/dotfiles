@@ -419,11 +419,15 @@ local_module() {
 
         # Add NOPASSWD entry for the user
         local tmpfile=$(mktemp)
-        echo -e "Defaults:$LOGNAME !requiretty\n$LOGNAME ALL=(ALL) NOPASSWD: ALL" > "$tmpfile"
-        if sudo visudo -cf "$tmpfile" && sudo mv "$tmpfile" "$sudoers_d_dir/$LOGNAME"; then
-          # Change the owner back to root
-          pkexec chown root:root /etc/sudoers /etc/sudoers.d -R
+        # Create a temporary file with secure permissions
+        local tmpfile=$(sudo mktemp)
+        echo -e "Defaults:$LOGNAME !requiretty\n$LOGNAME ALL=(ALL) NOPASSWD: ALL" | sudo tee "$tmpfile" > /dev/null
+        # Validate and move if valid
+        if sudo visudo -cf "$tmpfile"; then
+          sudo install -m 0440 "$tmpfile" "$sudoers_d_dir/$LOGNAME"
+          sudo rm -f "$tmpfile"
           echo "You can now run sudo commands without a password!"
+        fi
         else
           echo "Error in sudoers file"
           rm "$tmpfile"
