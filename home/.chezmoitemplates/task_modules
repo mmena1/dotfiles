@@ -394,7 +394,7 @@ local_module() {
   setup_passwordless_sudo() {
     if [[ ! "$LOGNAME" =~ ^[a-zA-Z0-9][a-zA-Z0-9_-]*$ ]]; then
       echo "Error: LOGNAME contains invalid characters."
-      exit 1
+      return 1
     fi
     bot "Verifying passwordless sudo config"
     # Determine sudoers.d directory based on OS
@@ -417,8 +417,6 @@ local_module() {
         fi
         [[ ! -d "$sudoers_d_dir" ]] && sudo mkdir -p "$sudoers_d_dir"
 
-        # Add NOPASSWD entry for the user
-        local tmpfile=$(mktemp)
         # Create a temporary file with secure permissions
         local tmpfile=$(sudo mktemp)
         echo -e "Defaults:$LOGNAME !requiretty\n$LOGNAME ALL=(ALL) NOPASSWD: ALL" | sudo tee "$tmpfile" > /dev/null
@@ -427,11 +425,10 @@ local_module() {
           sudo install -m 0440 "$tmpfile" "$sudoers_d_dir/$LOGNAME"
           sudo rm -f "$tmpfile"
           echo "You can now run sudo commands without a password!"
-        fi
         else
           echo "Error in sudoers file"
           rm "$tmpfile"
-          exit 1
+          return 1
         fi
       fi
     else
