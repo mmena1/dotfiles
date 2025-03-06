@@ -12,20 +12,14 @@ aptCacheExists() {
 package_module() {
   # Install packages based on OS
   install_packages() {
-    local os_type="unknown"
-    {{- if eq .chezmoi.os "linux" -}}
-      {{- if contains "debian" .chezmoi.osRelease.id -}}
-        install_debian_packages
-        os_type="debian"
-      {{- end -}}
-    {{- else if eq .chezmoi.os "darwin" -}}
-      install_macos_packages
-      os_type="darwin"
+    {{- if eq .osid "darwin" -}}
+    install_macos_packages
+    {{- else if eq .osid "linux-debian" -}}
+    install_debian_packages
+    {{- else -}}
+    error "Unsupported OS for package installation"
+    return 1
     {{- end -}}
-    if [[ "$os_type" == "unknown" ]]; then
-      error "Unsupported OS for package installation"
-      return 1
-    fi
     return 0
   }
   
@@ -196,13 +190,13 @@ shell_module() {
     fi
     
     # Add fish to /etc/shells if not already there
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      local fish_path=$(which fish)
-      if ! grep -q "$fish_path" /etc/shells; then
-        action "Adding Fish to /etc/shells"
-        echo "$fish_path" | sudo tee -a /etc/shells
-      fi
+    {{- if eq .osid "darwin" -}}
+    local fish_path=$(which fish)
+    if ! grep -q "$fish_path" /etc/shells; then
+      action "Adding Fish to /etc/shells"
+      echo "$fish_path" | sudo tee -a /etc/shells
     fi
+    {{- end -}}
     
     return 0
   }
@@ -238,10 +232,10 @@ devtools_module() {
   setup_vscode() {
     bot "Checking VSCode..."
     echo
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      warn "VSCode setup not supported on macOS."
-      return 0
-    fi
+    {{- if eq .osid "darwin" -}}
+    warn "VSCode setup not supported on macOS."
+    return 0
+    {{- end -}}
     if ! _exists code ; then
       if prompt "Would you like to install vscode?" ;then
         action "checking if snapd is enabled"
@@ -264,32 +258,32 @@ devtools_module() {
   setup_fonts() {
     action "Setting up fonts"
     
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      # Font installation for macOS handled via Homebrew casks
-      ok "Fonts installed via Homebrew"
-    else
-      bot "Fira Code setup."
-      if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
-        if prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?"; then
-          action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
-          wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip && \
-          if [ -f "FiraCode.zip" ]; then
-            action "Unzipping and adding to ~/.fonts..."
-            unzip -q FiraCode.zip -d ~/.fonts && \
-            fc-cache -f > /dev/null
-            action "Cleaning up..."
-            rm -f FiraCode.zip
-          else
-            error "Download failed. FiraCode.zip not found."
-            return 1
-          fi
+    {{- if eq .osid "darwin" -}}
+    # Font installation for macOS handled via Homebrew casks
+    ok "Fonts installed via Homebrew"
+    {{- else -}}
+    bot "Fira Code setup."
+    if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
+      if prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?"; then
+        action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
+        wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip && \
+        if [ -f "FiraCode.zip" ]; then
+          action "Unzipping and adding to ~/.fonts..."
+          unzip -q FiraCode.zip -d ~/.fonts && \
+          fc-cache -f > /dev/null
+          action "Cleaning up..."
+          rm -f FiraCode.zip
         else
-          ok "Skipping"
+          error "Download failed. FiraCode.zip not found."
+          return 1
         fi
       else
-        ok "Fira Code already installed!"
+        ok "Skipping"
       fi
+    else
+      ok "Fira Code already installed!"
     fi
+    {{- end -}}
     
     return 0
   }
@@ -298,10 +292,10 @@ devtools_module() {
 # Docker module
 docker_module() {
   setup_docker() {
-    if [[ "$OSTYPE" != "darwin"* ]]; then
-      install_docker
-      configure_docker
-    fi
+    {{- if ne .osid "darwin" -}}
+    install_docker
+    configure_docker
+    {{- else -}}
     return 0
   }
   install_docker() {
@@ -396,10 +390,10 @@ local_module() {
     # Determine sudoers.d directory based on OS
     local sudoers_d_dir="/etc/sudoers.d"
     local includedir_line="@includedir /etc/sudoers.d"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      sudoers_d_dir="/private/etc/sudoers.d"
-      includedir_line="#includedir /private/etc/sudoers.d"
-    fi
+    {{- if eq .osid "darwin" -}}
+    sudoers_d_dir="/private/etc/sudoers.d"
+    includedir_line="#includedir /private/etc/sudoers.d"
+    {{- end -}}
 
     # Check if NOPASSWD entry already exists for the user
     if ! sudo grep -q "NOPASSWD:     ALL" "$sudoers_d_dir/$LOGNAME" > /dev/null 2>&1; then

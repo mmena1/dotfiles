@@ -3,9 +3,14 @@
 {{- if eq $dev "true" -}}
 {{-   $email = promptStringOnce . "email" "Email address" -}}
 {{- end -}}
+{{- $osid := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{- end -}}
 
 [data]
   email = {{ $email | quote }}
+  osid = {{ $osid | quote }}
   dev = {{ $dev | quote }}
 
 # Package configuration

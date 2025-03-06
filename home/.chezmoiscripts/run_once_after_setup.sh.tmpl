@@ -22,10 +22,10 @@ setup_intro() {
 
 # Homebrew installation
 setup_homebrew() {
-  if [[ "$OSTYPE" != "darwin"* ]]; then
-    ok "Skipping Homebrew installation (not on macOS)"
-    return 0
-  fi
+  {{- if ne .osid "darwin" -}}
+  ok "Skipping Homebrew installation (not on macOS)"
+  return 0
+  {{- end -}}
   
   if ! _exists brew; then
     action "Installing Homebrew"
@@ -83,9 +83,9 @@ finish_setup() {
   bot "Setup completed!"
   echo "Your development environment is now ready"
   
-  if [[ "$OSTYPE" != "darwin"* ]]; then
-    warn "You may need to log out and back in for some changes to take effect"
-  fi
+  {{- if ne .osid "darwin" -}}
+  warn "You may need to log out and back in for some changes to take effect"
+  {{- end -}}
   
   return 0
 }
