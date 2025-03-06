@@ -295,9 +295,10 @@ docker_module() {
     {{- if ne .osid "darwin" -}}
     install_docker
     configure_docker
-    {{- else -}}
+    {{- end -}}
     return 0
   }
+  
   install_docker() {
     bot "Checking Docker"
     echo
