@@ -10,23 +10,19 @@ aptCacheExists() {
 
 # System package installation module
 package_module() {
-  # Detect OS and package manager
-  local os_type
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    os_type="darwin"
-  elif [[ -f /etc/debian_version ]]; then
-    os_type="debian"
-  else
-    os_type="unknown"
-  fi
-
   # Install packages based on OS
   install_packages() {
-    if [[ "$os_type" == "darwin" ]]; then
+    local os_type="unknown"
+    {{- if eq .chezmoi.os "linux" -}}
+      {{- if contains "debian" .chezmoi.osRelease.id -}}
+        install_debian_packages
+        os_type="debian"
+      {{- end -}}
+    {{- else if eq .chezmoi.os "darwin" -}}
       install_macos_packages
-    elif [[ "$os_type" == "debian" ]]; then
-      install_debian_packages
-    else
+      os_type="darwin"
+    {{- end -}}
+    if [[ "$os_type" == "unknown" ]]; then
       error "Unsupported OS for package installation"
       return 1
     fi
