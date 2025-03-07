@@ -3,13 +3,12 @@
 # Task modules for common installation functions
 # This template provides modular installation functions
 
-aptCacheExists() {
-  # Check for install candidate using apt-cache policy
-  apt-cache policy "$1" | grep -q 'Candidate:'
-}
-
 # System package installation module
 package_module() {
+  # Check for install candidate using apt-cache policy
+  aptCacheExists() {
+    apt-cache policy "$1" | grep -q 'Candidate:'
+  }
   # Install packages based on OS
   install_packages() {
     {{- if eq .osid "darwin" -}}
@@ -68,10 +67,6 @@ EOF
   install_debian_packages() {
     action "Installing Debian packages with apt"
     
-    # Pre-flight checks
-    _exists apt-get || { error "apt-get not found"; return 1; }
-    check_sudo || return 1
-    
     {{- $allPackages := concat .packages.common .packages.debian.apt | uniq -}}
     {{- /* Manually build a space-separated string */ -}}
     {{- $packagesStr := "" -}}
@@ -108,7 +103,7 @@ EOF
 
     # Proceed with installation
     running "Updating package lists"
-    sudo apt-get update -qy || { error "Failed to update packages"; return 1; }
+    sudo apt-get update -qy
 
     running "Installing packages (${#valid_pkgs[@]} total)"
     sudo apt-get install -qy --no-install-recommends "${valid_pkgs[@]}" || {
