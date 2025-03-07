@@ -73,7 +73,12 @@ EOF
     check_sudo || return 1
     
     {{- $allPackages := concat .packages.common .packages.debian.apt | uniq -}}
-    {{- $packagesStr := join $allPackages " " -}}
+    {{- /* Manually build a space-separated string */ -}}
+    {{- $packagesStr := "" -}}
+    {{- range $allPackages -}}
+      {{- $packagesStr = printf "%s %s" $packagesStr (toString .) -}}
+    {{- end -}}
+    {{- $packagesStr = trim $packagesStr -}}
     
     # Convert package string to array
     local all_pkgs=( {{ $packagesStr }} )
