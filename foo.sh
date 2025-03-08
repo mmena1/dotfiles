@@ -1,3 +1,192 @@
+#!/usr/bin/env bash
+
+_exists() {
+  command -v "$1" > /dev/null 2>&1
+}
+
+# Colors
+ESC_SEQ="\x1b["
+COL_RESET=$ESC_SEQ"39;49;00m"
+COL_RED=$ESC_SEQ"31;01m"
+COL_GREEN=$ESC_SEQ"32;01m"
+COL_YELLOW=$ESC_SEQ"33;01m"
+COL_BLUE=$ESC_SEQ"34;01m"
+COL_MAGENTA=$ESC_SEQ"35;01m"
+COL_CYAN=$ESC_SEQ"36;01m"
+
+function ok() {
+  local message=${1:-" "}
+  echo -e "$COL_GREEN[ok]$COL_RESET "$message
+}
+
+function bot() {
+  echo -e "\n$COL_GREEN\[._.]/$COL_RESET - "$1
+}
+
+function running() {
+  echo -en "$COL_YELLOW ⇒ $COL_RESET"$1": "
+}
+
+function action() {
+  echo -e "\n$COL_YELLOW[action]:$COL_RESET\n ⇒ $1..."
+}
+
+function warn() {
+  echo -e "$COL_YELLOW[warning]$COL_RESET "$1
+}
+
+function error() {
+  echo -e "$COL_RED[error]$COL_RESET "$1
+}
+
+function prompt {
+  local prompt_message=${1:-"Default prompt message"}
+  read -p "$prompt_message [y/N]" -n 1 -r -s answer
+  echo  # Ensure newline after input
+  if [[ $answer =~ ^[Yy]$ ]]; then
+    return 0  # Indicative of 'yes'
+  else
+    return 1  # Indicative of 'no' or any input other than 'y'
+  fi
+  
+}
+# Task Manager for Chezmoi Scripts
+# This template provides functions for task management and dependency resolution
+
+# Initialize task tracking
+declare -A TASK_STATUS  # Status of tasks (pending, running, completed, skipped, failed)
+declare -A TASK_DEPS    # Dependencies for each task
+declare -A TASK_FUNCS   # Function to execute for each task
+declare -A TASK_DESCS   # Description of each task
+declare -a TASK_ORDER   # Order of task execution
+
+# Register a task with dependencies
+# Usage: register_task "task_name" "description" "dependency1,dependency2" task_function
+register_task() {
+  local task_name="$1"
+  local task_desc="$2"
+  local task_deps="$3"
+  local task_func="$4"
+  
+  TASK_STATUS[$task_name]="pending"
+  TASK_DESCS[$task_name]="$task_desc"
+  TASK_DEPS[$task_name]="$task_deps"
+  TASK_FUNCS[$task_name]="$task_func"
+  TASK_ORDER+=("$task_name")
+}
+
+# Check if all dependencies for a task are met
+check_dependencies() {
+  local task_name="$1"
+  local deps="${TASK_DEPS[$task_name]}"
+  
+  if [[ -z "$deps" || "$deps" == "none" ]]; then
+    return 0  # No dependencies
+  fi
+  
+  IFS=',' read -ra dep_array <<< "$deps"
+  for dep in "${dep_array[@]}"; do
+    if [[ "${TASK_STATUS[$dep]}" != "completed" ]]; then
+      return 1  # Dependency not met
+    fi
+  done
+  
+  return 0  # All dependencies met
+}
+
+# Run a specific task
+run_task() {
+  local task_name="$1"
+  
+  # Skip if already completed or failed
+  if [[ "${TASK_STATUS[$task_name]}" == "completed" || "${TASK_STATUS[$task_name]}" == "failed" || "${TASK_STATUS[$task_name]}" == "skipped" ]]; then
+    return
+  fi
+  
+  # Check dependencies
+  if ! check_dependencies "$task_name"; then
+    TASK_STATUS[$task_name]="pending"  # Keep as pending
+    return
+  fi
+  
+  # Run the task
+  bot "Running task: ${TASK_DESCS[$task_name]}"
+  TASK_STATUS[$task_name]="running"
+  
+  if prompt "Would you like to run this task?"; then
+    # Execute the task function
+    if eval "${TASK_FUNCS[$task_name]}"; then
+      TASK_STATUS[$task_name]="completed"
+      ok "Task completed: $task_name"
+    else
+      TASK_STATUS[$task_name]="failed"
+      error "Task failed: $task_name"
+      if ! prompt "Continue despite failure?"; then
+        exit 1
+      fi
+    fi
+  else
+    TASK_STATUS[$task_name]="skipped"
+    warn "Task skipped: $task_name"
+  fi
+}
+
+# Execute all tasks in order, respecting dependencies
+execute_tasks() {
+  local max_iterations=100  # Avoid infinite loop
+  local iterations=0
+  local completed_count=0
+  local total_tasks=${#TASK_ORDER[@]}
+  
+  while (( completed_count < total_tasks && iterations < max_iterations )); do
+    iterations=$((iterations + 1))
+    
+    # Count completed tasks
+    completed_count=0
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "completed" || "${TASK_STATUS[$task]}" == "skipped" || "${TASK_STATUS[$task]}" == "failed" ]]; then
+        completed_count=$((completed_count + 1))
+      fi
+    done
+    
+    # Try to run pending tasks
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "pending" ]]; then
+        run_task "$task"
+      fi
+    done
+    
+    # Break if no progress is being made
+    local new_completed_count=0
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "completed" || "${TASK_STATUS[$task]}" == "skipped" || "${TASK_STATUS[$task]}" == "failed" ]]; then
+        new_completed_count=$((new_completed_count + 1))
+      fi
+    done
+    
+    if (( new_completed_count == completed_count && completed_count < total_tasks )); then
+      error "Dependency deadlock detected. Some tasks cannot be completed."
+      exit 1
+    fi
+  done
+  
+  if (( iterations >= max_iterations )); then
+    error "Maximum iterations reached. Some tasks may not have completed."
+    exit 1
+  fi
+  
+  # Final report
+  echo
+  bot "Task execution summary:"
+  for task in "${TASK_ORDER[@]}"; do
+    case "${TASK_STATUS[$task]}" in
+      "completed") echo -e "$COL_GREEN[✓]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      "skipped")   echo -e "$COL_YELLOW[⟳]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      "failed")    echo -e "$COL_RED[✗]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      *)           echo -e "$COL_RED[?]$COL_RESET ${TASK_DESCS[$task]}" ;;
+    esac
+  done
+}
 # Task modules for common installation functions
 # This template provides modular installation functions
 
@@ -9,14 +198,7 @@ package_module() {
   }
   # Install packages based on OS
   install_packages() {
-    {{ if eq .osid "darwin" -}}
     install_macos_packages
-    {{ else if eq .osid "linux-ubuntu" -}}
-    install_debian_packages
-    {{ else -}}
-    error "Unsupported OS for package installation: {{ .osid }}"
-    return 1
-    {{ end -}}
     return 0
   }
   
@@ -28,30 +210,28 @@ package_module() {
       return 1
     fi
 
-    {{ $allPackages := concat .packages.common .packages.darwin.brews | uniq -}}
-    
     # Generate Brewfile
     cat > Brewfile <<EOF
 # Generated by Chezmoi - DO NOT EDIT DIRECTLY
 
-{{ if .packages.darwin.taps -}}
 # Taps
-{{ range .packages.darwin.taps -}}
-tap {{ . }}
-{{ end }}
-{{ end -}}
+tap homebrew/cask-fonts
 
 # Formulae
-{{ range $allPackages -}}
-brew "{{ . }}"
-{{ end -}}
-
-{{ if .packages.darwin.casks -}}
+brew "git"
+brew "fish"
+brew "tmux"
+brew "curl"
+brew "ripgrep"
+brew "starship"
+brew "eza"
+brew "gh"
+brew "bat"
 # Casks
-{{ range .packages.darwin.casks -}}
-cask "{{ . }}"
-{{ end }}
-{{ end -}}
+cask "visual-studio-code"
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"
+
 EOF
 
     # Install using Brewfile
@@ -65,16 +245,8 @@ EOF
   install_debian_packages() {
     action "Installing Debian packages with apt"
     
-    {{ $allPackages := concat .packages.common .packages.debian.apt | uniq -}}
-    {{- /* Manually build a space-separated string */ -}}
-    {{ $packagesStr := "" -}}
-    {{ range $allPackages -}}
-      {{ $packagesStr = printf "%s %s" $packagesStr (toString .) -}}
-    {{ end -}}
-    {{ $packagesStr = trim $packagesStr -}}
-    
     # Convert package string to array
-    local all_pkgs=( {{ $packagesStr }} )
+    local all_pkgs=( git fish tmux curl ripgrep build-essential bat cmake htop fonts-noto-color-emoji powerline fonts-powerline tree fonts-firacode vim xclip )
     local valid_pkgs=()
     local invalid_pkgs=()
 
@@ -188,14 +360,11 @@ shell_module() {
     fi
     
     # Add fish to /etc/shells if not already there
-    {{ if eq .osid "darwin" -}}
     local fish_path=$(which fish)
     if ! grep -q "$fish_path" /etc/shells; then
       action "Adding Fish to /etc/shells"
       echo "$fish_path" | sudo tee -a /etc/shells
     fi
-    {{ end -}}
-    
     return 0
   }
   
@@ -219,10 +388,8 @@ devtools_module() {
   setup_vscode() {
     bot "Checking VSCode..."
     echo
-    {{ if eq .osid "darwin" -}}
     warn "VSCode setup not supported on macOS."
     return 0
-    {{ end -}}
     if ! _exists code ; then
       if prompt "Would you like to install vscode?" ;then
         action "checking if snapd is enabled"
@@ -245,33 +412,8 @@ devtools_module() {
   setup_fonts() {
     action "Setting up fonts"
     
-    {{ if eq .osid "darwin" -}}
     # Font installation for macOS handled via Homebrew casks
     ok "Fonts installed via Homebrew"
-    {{ else -}}
-    bot "Fira Code setup."
-    if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
-      if prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?"; then
-        action "Downloading from https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
-        wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip && \
-        if [ -f "FiraCode.zip" ]; then
-          action "Unzipping and adding to ~/.fonts..."
-          unzip -q FiraCode.zip -d ~/.fonts && \
-          fc-cache -f > /dev/null
-          action "Cleaning up..."
-          rm -f FiraCode.zip
-        else
-          error "Download failed. FiraCode.zip not found."
-          return 1
-        fi
-      else
-        ok "Skipping"
-      fi
-    else
-      ok "Fira Code already installed!"
-    fi
-    {{ end -}}
-    
     return 0
   }
 }
@@ -279,10 +421,6 @@ devtools_module() {
 # Docker module
 docker_module() {
   setup_docker() {
-    {{ if ne .osid "darwin" -}}
-    install_docker
-    configure_docker
-    {{ end -}}
     return 0
   }
   
@@ -357,7 +495,7 @@ local_module() {
       if prompt "Generate new SSH key?"; then
         action "Generating SSH key"
         # Prompt for passphrase instead of using empty one
-        ssh-keygen -t ed25519 -C "{{ .email }}" -f ~/.ssh/id_ed25519
+        ssh-keygen -t ed25519 -C "example@email.com" -f ~/.ssh/id_ed25519
         # Start ssh-agent
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/id_ed25519
@@ -378,11 +516,8 @@ local_module() {
     # Determine sudoers.d directory based on OS
     local sudoers_d_dir="/etc/sudoers.d"
     local includedir_line="@includedir /etc/sudoers.d"
-    {{ if eq .osid "darwin" -}}
     sudoers_d_dir="/private/etc/sudoers.d"
     includedir_line="#includedir /private/etc/sudoers.d"
-    {{ end -}}
-
     # Check if NOPASSWD entry already exists for the user
     if ! sudo grep -q "NOPASSWD:     ALL" "$sudoers_d_dir/$LOGNAME" > /dev/null 2>&1; then
       echo "No sudoer file found for passwordless operation."
@@ -420,3 +555,103 @@ local_module() {
     fi
   }
 }
+# Initialize modules
+package_module
+asdf_module
+shell_module
+devtools_module
+docker_module
+local_module
+
+# Setup intro
+setup_intro() {
+  bot "Welcome to the dotfiles setup script"
+  echo "This script will set up your development environment"
+  echo "It will not install anything without your direct agreement"
+  return 0
+}
+
+# Homebrew installation
+setup_homebrew() {
+  if ! _exists brew; then
+    action "Installing Homebrew"
+    # Download script first
+    local brew_install_script=$(mktemp)
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brew_install_script"
+    
+    # Verify script exists and has content
+    if [[ ! -s "$brew_install_script" ]]; then
+      error "Failed to download Homebrew installation script"
+      rm -f "$brew_install_script"
+      return 1
+    fi
+    
+    # Execute the script
+    /bin/bash "$brew_install_script" || { 
+      error "Homebrew installation failed"
+      rm -f "$brew_install_script"
+      return 1
+    }
+    
+    # Clean up
+    rm -f "$brew_install_script"
+  else
+    ok "Homebrew already installed"
+  fi
+  return 0
+}
+
+# Tmux configuration
+setup_tmux() {
+  if ! _exists tmux; then
+    error "Tmux not installed"
+    return 1
+  fi
+  
+  local tmux_conf_repo="https://github.com/gpakosz/.tmux.git"
+  local tmux_conf_dir="$HOME/.tmux"
+  
+  if [[ ! -d "$tmux_conf_dir" ]]; then
+    action "Cloning tmux configuration"
+    git clone "$tmux_conf_repo" "$tmux_conf_dir" || return 1
+    ln -sf "$tmux_conf_dir/.tmux.conf" "$HOME/.tmux.conf"
+  else
+    action "Updating tmux configuration"
+    git -C "$tmux_conf_dir" pull || return 1
+  fi
+  
+  ok "Tmux configured"
+  return 0
+}
+
+# Finish setup
+finish_setup() {
+  bot "Setup completed!"
+  echo "Your development environment is now ready"
+  
+  return 0
+}
+
+# Register all tasks with their dependencies
+# Format: register_task "task_id" "description" "dependency1,dependency2" function_name
+register_task "intro" "Introduction" "none" setup_intro
+register_task "homebrew" "Install Homebrew (macOS)" "intro" setup_homebrew
+register_task "packages" "Install system packages" "homebrew" install_packages
+register_task "fish" "Configure Fish shell" "packages" setup_fish
+register_task "tmux" "Setup Tmux configuration" "packages" setup_tmux
+register_task "asdf" "Install ASDF version manager" "packages" install_asdf
+register_task "tools" "Install tools from .tool-versions" "asdf" install_asdf_tools
+register_task "docker" "Configure Docker" "packages" setup_docker
+register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
+register_task "starship" "Configure Starship prompt" "packages" setup_starship
+register_task "fonts" "Setup fonts" "packages" setup_fonts
+register_task "local" "Local setup" "packages,fish,tmux,tools,docker,vscode,starship,fonts" local_setup
+register_task "finish" "Finish setup" "fish,tmux,tools,docker,vscode,starship,fonts" finish_setup
+
+# Execute all tasks
+if ! execute_tasks; then
+  error "Setup failed. Please check the logs for errors."
+  exit 1
+else
+  ok "All tasks completed successfully."
+fi

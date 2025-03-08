@@ -24,6 +24,14 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
+      # Install updated Bash on macOS
+      - name: Install Bash 5+ (macOS only)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew update
+          brew install bash
+        shell: bash
+
       - name: Cache asdf tools
         uses: actions/cache@v3
         with:
@@ -35,5 +43,9 @@ jobs:
 
       - name: Initialize chezmoi with the current branch content
         run: |
+          # Use Homebrew's Bash on macOS
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            export PATH="/usr/local/opt/bash/bin:$PATH"
+          fi
           sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}
         shell: bash
