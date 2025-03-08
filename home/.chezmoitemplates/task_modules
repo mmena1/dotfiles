@@ -11,10 +11,10 @@ package_module() {
   install_packages() {
     {{ if eq .osid "darwin" -}}
     install_macos_packages
-    {{ else if eq .osid "linux-debian" -}}
+    {{ else if eq .osid "linux-ubuntu" -}}
     install_debian_packages
     {{ else -}}
-    error "Unsupported OS for package installation"
+    error "Unsupported OS for package installation: {{ .osid }}"
     return 1
     {{ end -}}
     return 0
