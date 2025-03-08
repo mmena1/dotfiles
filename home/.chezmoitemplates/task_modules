@@ -37,7 +37,7 @@ package_module() {
 {{ if .packages.darwin.taps -}}
 # Taps
 {{ range .packages.darwin.taps -}}
-tap {{ . }}
+tap "{{ . }}"
 {{ end }}
 {{ end -}}
 
@@ -56,7 +56,7 @@ EOF
 
     # Install using Brewfile
     running "Installing via Brewfile"
-    brew bundle install --no-lock || warn "Brewfile installation failed"
+    brew bundle install --file=Brewfile || { error "Brewfile installation failed" ; return 1; }
     
     return 0
   }
