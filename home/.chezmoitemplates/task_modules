@@ -201,25 +201,14 @@ shell_module() {
   
   # Setup Starship prompt
   setup_starship() {
-    if ! _exists starship; then
-      error "Starship not installed"
-      return 1
+    if ! _exists starship ; then
+      action "curl -sS https://starship.rs/install.sh | sh -s -- -y"
+      curl -sS https://starship.rs/install.sh | sh -s -- -y > /dev/null
+      ok "Starship configured"
+    else
+      ok "Starship already installed!"
     fi
     
-    # Ensure config directory exists
-    mkdir -p ~/.config
-    
-    # Create default configuration if it doesn't exist
-    if [[ ! -f ~/.config/starship.toml ]]; then
-      action "Creating Starship configuration"
-      # Either copy from template or generate minimal config
-      starship preset minimal > ~/.config/starship.toml || {
-        error "Failed to create Starship configuration"
-        return 1
-      }
-    fi
-    
-    ok "Starship configured"
     return 0
   }
 }
