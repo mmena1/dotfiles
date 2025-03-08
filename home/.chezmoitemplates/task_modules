@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Task modules for common installation functions
 # This template provides modular installation functions
 
@@ -11,14 +9,14 @@ package_module() {
   }
   # Install packages based on OS
   install_packages() {
-    {{- if eq .osid "darwin" -}}
+    {{ if eq .osid "darwin" -}}
     install_macos_packages
-    {{- else if eq .osid "linux-debian" -}}
+    {{ else if eq .osid "linux-debian" -}}
     install_debian_packages
-    {{- else -}}
+    {{ else -}}
     error "Unsupported OS for package installation"
     return 1
-    {{- end -}}
+    {{ end -}}
     return 0
   }
   
@@ -30,7 +28,7 @@ package_module() {
       return 1
     fi
 
-    {{- $allPackages := concat .packages.common .packages.darwin.brews | uniq -}}
+    {{ $allPackages := concat .packages.common .packages.darwin.brews | uniq -}}
     
     # Generate Brewfile
     cat > Brewfile <<EOF
@@ -67,13 +65,13 @@ EOF
   install_debian_packages() {
     action "Installing Debian packages with apt"
     
-    {{- $allPackages := concat .packages.common .packages.debian.apt | uniq -}}
+    {{ $allPackages := concat .packages.common .packages.debian.apt | uniq -}}
     {{- /* Manually build a space-separated string */ -}}
-    {{- $packagesStr := "" -}}
-    {{- range $allPackages -}}
-      {{- $packagesStr = printf "%s %s" $packagesStr (toString .) -}}
-    {{- end -}}
-    {{- $packagesStr = trim $packagesStr -}}
+    {{ $packagesStr := "" -}}
+    {{ range $allPackages -}}
+      {{ $packagesStr = printf "%s %s" $packagesStr (toString .) -}}
+    {{ end -}}
+    {{ $packagesStr = trim $packagesStr -}}
     
     # Convert package string to array
     local all_pkgs=( {{ $packagesStr }} )
@@ -103,7 +101,7 @@ EOF
 
     # Proceed with installation
     running "Updating package lists"
-    sudo apt-get update -qy
+    sudo apt-get update -qy || { error "Failed to update packages"; return 1; }
 
     running "Installing packages (${#valid_pkgs[@]} total)"
     sudo apt-get install -qy --no-install-recommends "${valid_pkgs[@]}" || {
@@ -154,7 +152,6 @@ asdf_module() {
     
     while read -r line; do
       # get the first word of the line
-      tool_name=$(echo $line | awk '{print $1;}')
       tool_name="${line%% *}"
       running "$tool_name"
       
@@ -233,10 +230,10 @@ devtools_module() {
   setup_vscode() {
     bot "Checking VSCode..."
     echo
-    {{- if eq .osid "darwin" -}}
+    {{ if eq .osid "darwin" -}}
     warn "VSCode setup not supported on macOS."
     return 0
-    {{- end -}}
+    {{ end -}}
     if ! _exists code ; then
       if prompt "Would you like to install vscode?" ;then
         action "checking if snapd is enabled"
@@ -259,10 +256,10 @@ devtools_module() {
   setup_fonts() {
     action "Setting up fonts"
     
-    {{- if eq .osid "darwin" -}}
+    {{ if eq .osid "darwin" -}}
     # Font installation for macOS handled via Homebrew casks
     ok "Fonts installed via Homebrew"
-    {{- else -}}
+    {{ else -}}
     bot "Fira Code setup."
     if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
       if prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?"; then
@@ -284,7 +281,7 @@ devtools_module() {
     else
       ok "Fira Code already installed!"
     fi
-    {{- end -}}
+    {{ end -}}
     
     return 0
   }
@@ -293,10 +290,10 @@ devtools_module() {
 # Docker module
 docker_module() {
   setup_docker() {
-    {{- if ne .osid "darwin" -}}
+    {{ if ne .osid "darwin" -}}
     install_docker
     configure_docker
-    {{- end -}}
+    {{ end -}}
     return 0
   }
   
@@ -392,10 +389,10 @@ local_module() {
     # Determine sudoers.d directory based on OS
     local sudoers_d_dir="/etc/sudoers.d"
     local includedir_line="@includedir /etc/sudoers.d"
-    {{- if eq .osid "darwin" -}}
+    {{ if eq .osid "darwin" -}}
     sudoers_d_dir="/private/etc/sudoers.d"
     includedir_line="#includedir /private/etc/sudoers.d"
-    {{- end -}}
+    {{ end -}}
 
     # Check if NOPASSWD entry already exists for the user
     if ! sudo grep -q "NOPASSWD:     ALL" "$sudoers_d_dir/$LOGNAME" > /dev/null 2>&1; then

@@ -22,10 +22,10 @@ setup_intro() {
 
 # Homebrew installation
 setup_homebrew() {
-  {{- if ne .osid "darwin" -}}
+  {{ if ne .osid "darwin" -}}
   ok "Skipping Homebrew installation (not on macOS)"
   return 0
-  {{- end -}}
+  {{ end -}}
   
   if ! _exists brew; then
     action "Installing Homebrew"
@@ -83,9 +83,9 @@ finish_setup() {
   bot "Setup completed!"
   echo "Your development environment is now ready"
   
-  {{- if ne .osid "darwin" -}}
+  {{ if ne .osid "darwin" -}}
   warn "You may need to log out and back in for some changes to take effect"
-  {{- end -}}
+  {{ end -}}
   
   return 0
 }

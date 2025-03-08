@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Task Manager for Chezmoi Scripts
 # This template provides functions for task management and dependency resolution
 
