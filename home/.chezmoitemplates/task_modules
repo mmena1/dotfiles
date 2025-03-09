@@ -126,7 +126,8 @@ asdf_module() {
     if ! _exists asdf; then
       action "Installing ASDF version manager"
       if [[ ! -d ~/.asdf ]]; then
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf || return 1
+        # Setting branch to v0.14.0 to avoid breaking changes an newer versions
+        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0|| return 1
         source ~/.asdf/asdf.sh
       else
         ok "ASDF directory already exists"
@@ -220,7 +221,7 @@ devtools_module() {
     bot "Checking VSCode..."
     echo
     {{ if eq .osid "darwin" -}}
-    warn "VSCode setup not supported on macOS."
+    ok "VSCode setup already handled via Homebrew casks"
     return 0
     {{ end -}}
     if ! _exists code ; then
@@ -248,7 +249,8 @@ devtools_module() {
     {{ if eq .osid "darwin" -}}
     # Font installation for macOS handled via Homebrew casks
     ok "Fonts installed via Homebrew"
-    {{ else -}}
+    return 0
+    {{ end -}}
     bot "Fira Code setup."
     if ! fc-list | grep -qi "Fira Code" > /dev/null 2>&1; then
       if prompt "Would you like to install Fira Code NerdFont to get cool icons on the terminal?"; then
@@ -270,7 +272,6 @@ devtools_module() {
     else
       ok "Fira Code already installed!"
     fi
-    {{ end -}}
     
     return 0
   }
@@ -279,16 +280,18 @@ devtools_module() {
 # Docker module
 docker_module() {
   setup_docker() {
-    {{ if ne .osid "darwin" -}}
+    bot "Checking Docker..."
+    echo
+    {{ if eq .osid "darwin" -}}
+    warn "Docker setup not supported on macOS"
+    return 0
+    {{ end -}}
     install_docker
     configure_docker
-    {{ end -}}
     return 0
   }
   
   install_docker() {
-    bot "Checking Docker"
-    echo
     if ! _exists docker ; then
       if prompt "Would you like to install Docker?"; then
         action "Adding Docker official GPG key"

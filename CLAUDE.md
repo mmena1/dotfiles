@@ -11,7 +11,6 @@
 
 ## Task Management
 - Tasks are defined in `run_once_after_setup.sh.tmpl`
-- Enable/disable tasks in `.chezmoi.toml.tmpl`
 - Add new tasks by editing the task registration section
 
 ## Code Style Guidelines

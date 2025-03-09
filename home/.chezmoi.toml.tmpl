@@ -20,22 +20,9 @@
 
 [data.packages.darwin]
   brews = ["starship", "eza", "gh", "bat"]
-  taps = ["homebrew/cask-fonts"]
   casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
 
 [data.packages.debian]
   apt = ["build-essential", "bat", "cmake", "htop", "fonts-noto-color-emoji", 
         "powerline", "fonts-powerline", "tree", "fonts-firacode", 
         "vim", "xclip"]
-
-# Task configuration
-[data.tasks]
-    # Enable or disable specific setup tasks
-    tmux = true
-    asdf = true
-    docker = true
-    ssh = true
-    vscode = true
-    starship = true
-    onepassword = false
-    gitcli = true

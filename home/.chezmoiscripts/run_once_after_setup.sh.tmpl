@@ -4,14 +4,6 @@
 {{ template "task_manager" . -}}
 {{ template "task_modules" . -}}
 
-# Initialize modules
-package_module
-asdf_module
-shell_module
-devtools_module
-docker_module
-local_module
-
 # Setup intro
 setup_intro() {
   bot "Welcome to the dotfiles setup script"
@@ -90,6 +82,13 @@ finish_setup() {
   return 0
 }
 
+# Initialize modules
+package_module
+asdf_module
+shell_module
+devtools_module
+docker_module
+
 # Register all tasks with their dependencies
 # Format: register_task "task_id" "description" "dependency1,dependency2" function_name
 register_task "intro" "Introduction" "none" setup_intro
@@ -104,6 +103,7 @@ register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
 register_task "starship" "Configure Starship prompt" "packages" setup_starship
 register_task "fonts" "Setup fonts" "packages" setup_fonts
 {{ if eq .dev "true" -}}
+local_module
 register_task "local" "Local setup" "packages,fish,tmux,tools,docker,vscode,starship,fonts" local_setup
 {{ end -}}
 register_task "finish" "Finish setup" "fish,tmux,tools,docker,vscode,starship,fonts" finish_setup
