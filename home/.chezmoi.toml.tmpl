@@ -1,15 +1,29 @@
-{{- $dev := or (env "dev") "true" -}}
 {{- $email := "example@email.com" -}}
+{{- $dev := (env "dev") | default "true" -}}
 {{- if eq $dev "true" -}}
 {{-   $email = promptStringOnce . "email" "Email address" -}}
 {{- end -}}
 {{- $osid := .chezmoi.os -}}
-
-{{- if hasKey .chezmoi.osRelease "idLike" -}}
-{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.idLike -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
 {{- end -}}
 
 [data]
-    email = {{ $email | quote }}
-    osid = {{ $osid | quote }}
-    dev = {{ $dev | quote }}
+  email = {{ $email | quote }}
+  osid = {{ $osid | quote }}
+  dev = {{ $dev | quote }}
+
+# Package configuration
+[data.packages]
+  # Common packages for all systems
+  common = ["git", "fish", "tmux", "curl", "ripgrep", "bat"]
+
+[data.packages.darwin]
+  brews = ["starship", "eza", "gh"]
+  taps = []
+  casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
+
+[data.packages.debian]
+  apt = ["build-essential", "cmake", "htop", "fonts-noto-color-emoji", 
+        "powerline", "fonts-powerline", "tree", "fonts-firacode", 
+        "vim", "xclip"]

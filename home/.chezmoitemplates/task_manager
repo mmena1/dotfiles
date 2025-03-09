@@ -1,0 +1,137 @@
+# Task Manager for Chezmoi Scripts
+# This template provides functions for task management and dependency resolution
+
+# Initialize task tracking
+declare -A TASK_STATUS  # Status of tasks (pending, running, completed, skipped, failed)
+declare -A TASK_DEPS    # Dependencies for each task
+declare -A TASK_FUNCS   # Function to execute for each task
+declare -A TASK_DESCS   # Description of each task
+declare -a TASK_ORDER   # Order of task execution
+
+# Register a task with dependencies
+# Usage: register_task "task_name" "description" "dependency1,dependency2" task_function
+register_task() {
+  local task_name="$1"
+  local task_desc="$2"
+  local task_deps="$3"
+  local task_func="$4"
+  
+  TASK_STATUS[$task_name]="pending"
+  TASK_DESCS[$task_name]="$task_desc"
+  TASK_DEPS[$task_name]="$task_deps"
+  TASK_FUNCS[$task_name]="$task_func"
+  TASK_ORDER+=("$task_name")
+}
+
+# Check if all dependencies for a task are met
+check_dependencies() {
+  local task_name="$1"
+  local deps="${TASK_DEPS[$task_name]}"
+  
+  if [[ -z "$deps" || "$deps" == "none" ]]; then
+    return 0  # No dependencies
+  fi
+  
+  IFS=',' read -ra dep_array <<< "$deps"
+  for dep in "${dep_array[@]}"; do
+    if [[ "${TASK_STATUS[$dep]}" != "completed" ]]; then
+      return 1  # Dependency not met
+    fi
+  done
+  
+  return 0  # All dependencies met
+}
+
+# Run a specific task
+run_task() {
+  local task_name="$1"
+  
+  # Skip if already completed or failed
+  if [[ "${TASK_STATUS[$task_name]}" == "completed" || "${TASK_STATUS[$task_name]}" == "failed" || "${TASK_STATUS[$task_name]}" == "skipped" ]]; then
+    return
+  fi
+  
+  # Check dependencies
+  if ! check_dependencies "$task_name"; then
+    TASK_STATUS[$task_name]="pending"  # Keep as pending
+    return
+  fi
+  
+  # Run the task
+  bot "Running task: ${TASK_DESCS[$task_name]}"
+  TASK_STATUS[$task_name]="running"
+  
+  if prompt "Would you like to run this task?"; then
+    # Execute the task function
+    if eval "${TASK_FUNCS[$task_name]}"; then
+      TASK_STATUS[$task_name]="completed"
+      ok "Task completed: $task_name"
+    else
+      TASK_STATUS[$task_name]="failed"
+      error "Task failed: $task_name"
+      if ! prompt "Continue despite failure?"; then
+        exit 1
+      fi
+    fi
+  else
+    TASK_STATUS[$task_name]="skipped"
+    warn "Task skipped: $task_name"
+  fi
+}
+
+# Execute all tasks in order, respecting dependencies
+execute_tasks() {
+  local max_iterations=100  # Avoid infinite loop
+  local iterations=0
+  local completed_count=0
+  local total_tasks=${#TASK_ORDER[@]}
+  
+  while (( completed_count < total_tasks && iterations < max_iterations )); do
+    iterations=$((iterations + 1))
+    
+    # Count completed tasks
+    completed_count=0
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "completed" || "${TASK_STATUS[$task]}" == "skipped" || "${TASK_STATUS[$task]}" == "failed" ]]; then
+        completed_count=$((completed_count + 1))
+      fi
+    done
+    
+    # Try to run pending tasks
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "pending" ]]; then
+        run_task "$task"
+      fi
+    done
+    
+    # Break if no progress is being made
+    local new_completed_count=0
+    for task in "${TASK_ORDER[@]}"; do
+      if [[ "${TASK_STATUS[$task]}" == "completed" || "${TASK_STATUS[$task]}" == "skipped" || "${TASK_STATUS[$task]}" == "failed" ]]; then
+        new_completed_count=$((new_completed_count + 1))
+      fi
+    done
+    
+    if (( new_completed_count == completed_count && completed_count < total_tasks )); then
+      error "Dependency deadlock detected. Some tasks cannot be completed."
+      exit 1
+    fi
+  done
+  
+  if (( iterations >= max_iterations )); then
+    error "Maximum iterations reached. Some tasks may not have completed."
+    exit 1
+  fi
+  
+  # Final report
+  echo
+  bot "Task execution summary:"
+  for task in "${TASK_ORDER[@]}"; do
+    case "${TASK_STATUS[$task]}" in
+      "completed") echo -e "$COL_GREEN[✓]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      "skipped")   echo -e "$COL_YELLOW[⟳]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      "failed")    echo -e "$COL_RED[✗]$COL_RESET ${TASK_DESCS[$task]}" ;;
+      *)           echo -e "$COL_RED[?]$COL_RESET ${TASK_DESCS[$task]}" ;;
+    esac
+  done
+}

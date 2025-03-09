@@ -10,23 +10,42 @@ env:
   dev: "false"
 
 jobs:
-  validate-chezmoi-setup:
-    runs-on: ubuntu-latest
+  validate:
+    name: Validate on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+    
     steps:
       - name: Extract branch name
         shell: bash
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
+      # Install updated Bash on macOS
+      - name: Install Bash 5+ (macOS only)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew update
+          brew install bash
+        shell: bash
+
       - name: Cache asdf tools
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.asdf
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-asdf-
-      
 
       - name: Initialize chezmoi with the current branch content
-        run: sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}
+        run: |
+          # Use Homebrew's Bash on macOS
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            export PATH="/usr/local/opt/bash/bin:$PATH"
+          fi
+          sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply ${{ github.repository_owner }} --branch ${{ steps.extract_branch.outputs.branch }}
+        shell: bash
