@@ -16,14 +16,14 @@
 # Package configuration
 [data.packages]
   # Common packages for all systems
-  common = ["git", "fish", "tmux", "curl", "ripgrep"]
+  common = ["git", "fish", "tmux", "curl", "ripgrep", "bat"]
 
 [data.packages.darwin]
-  brews = ["starship", "eza", "gh", "bat"]
+  brews = ["starship", "eza", "gh"]
   taps = []
   casks = ["visual-studio-code", "font-fira-code", "font-fira-code-nerd-font"]
 
 [data.packages.debian]
-  apt = ["build-essential", "bat", "cmake", "htop", "fonts-noto-color-emoji", 
+  apt = ["build-essential", "cmake", "htop", "fonts-noto-color-emoji", 
         "powerline", "fonts-powerline", "tree", "fonts-firacode", 
         "vim", "xclip"]
