@@ -64,7 +64,7 @@ To install, choose one of the following methods and execute the command in my te
 
 Keep my environment fresh and up-to-date with a simple command:
 
-```
+```sh
 chezmoi update
 ```
 
