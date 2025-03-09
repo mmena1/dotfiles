@@ -80,6 +80,36 @@ Leveraging the best of oh-my-zsh, I've crafted custom Fish scripts, including gi
 
 At the heart of my dotfile management is Chezmoi, a robust tool offering [templating features](https://www.chezmoi.io/user-guide/templating/) to dynamically adapt scripts across various systems, alongside the capability to preview and verify scripts before execution.
 
+### Modular Task Management
+
+A task-based approach is used for managing the setup and configuration of my development environment. Instead of running a monolithic script, the setup process is broken down into discrete tasks that can be individually registered, managed, and executed.
+
+Key features of the task management system:
+
+- **Task Registration**: Each setup component is registered as a task with a name, description, list of dependencies, and execution function.
+- **Dependency Resolution**: Tasks specify their dependencies, ensuring they're executed in the correct order. For example, package installation requires Homebrew to be installed first (only for macOS).
+- **Interactive Execution**: Before each task runs, I'm prompted to confirm, letting me customize my setup process.
+- **Error Handling**: If a task fails, I can choose to continue with the remaining tasks or abort the setup.
+- **Modular Implementation**: Setup components are organized into modules (package management, shell configuration, development tools, etc.) that can be maintained independently.
+
+This approach makes the setup process more maintainable, flexible, and user-friendly. New tasks can be added without modifying existing code, and dependencies are automatically resolved to ensure a smooth setup experience.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant SetupScript
+    participant TaskManager
+    participant TaskModule
+
+    User->>SetupScript: Initiate environment setup
+    SetupScript->>TaskManager: Register setup tasks
+    TaskManager->>TaskManager: Check dependencies for each task
+    TaskManager->>TaskModule: Execute task module (e.g., packages, tools, shell)
+    TaskModule-->>TaskManager: Return task status
+    TaskManager-->>SetupScript: Report consolidated task results
+    SetupScript->>User: Display "Setup completed" message
+```
+
 ## Acknowledgments
 
 A special thanks to:
