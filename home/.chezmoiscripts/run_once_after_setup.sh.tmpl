@@ -94,7 +94,7 @@ register_task "homebrew" "Install Homebrew (macOS)" "intro" setup_homebrew
 register_task "packages" "Install system packages" "homebrew" install_packages
 register_task "fish" "Configure Fish shell" "packages" setup_fish
 register_task "tmux" "Setup Tmux configuration" "packages" setup_tmux
-register_task "mise" "Install mise version manager" "packages" install_mise
+register_task "mise" "Install mise version manager" "packages" setup_mise
 register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
 register_task "starship" "Configure Starship prompt" "packages" setup_starship
 register_task "fonts" "Setup fonts" "packages" setup_fonts
