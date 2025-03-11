@@ -32,15 +32,6 @@ jobs:
           brew install bash
         shell: bash
 
-      - name: Cache asdf tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.asdf
-          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
-          restore-keys: |
-            ${{ runner.os }}-asdf-
-
       - name: Initialize chezmoi with the current branch content
         run: |
           # Use Homebrew's Bash on macOS
