@@ -84,10 +84,8 @@ finish_setup() {
 
 # Initialize modules
 package_module
-asdf_module
 shell_module
 devtools_module
-docker_module
 
 # Register all tasks with their dependencies
 # Format: register_task "task_id" "description" "dependency1,dependency2" function_name
@@ -96,17 +94,15 @@ register_task "homebrew" "Install Homebrew (macOS)" "intro" setup_homebrew
 register_task "packages" "Install system packages" "homebrew" install_packages
 register_task "fish" "Configure Fish shell" "packages" setup_fish
 register_task "tmux" "Setup Tmux configuration" "packages" setup_tmux
-register_task "asdf" "Install ASDF version manager" "packages" install_asdf
-register_task "tools" "Install tools from .tool-versions" "asdf" install_asdf_tools
-register_task "docker" "Configure Docker" "packages" setup_docker
+register_task "mise" "Install mise version manager" "packages" setup_mise
 register_task "vscode" "Setup VSCode and extensions" "packages" setup_vscode
 register_task "starship" "Configure Starship prompt" "packages" setup_starship
 register_task "fonts" "Setup fonts" "packages" setup_fonts
 {{ if eq .dev "true" -}}
 local_module
-register_task "local" "Local setup" "packages,fish,tmux,tools,docker,vscode,starship,fonts" local_setup
+register_task "local" "Local setup" "packages,fish,tmux,mise,vscode,starship,fonts" local_setup
 {{ end -}}
-register_task "finish" "Finish setup" "fish,tmux,tools,docker,vscode,starship,fonts" finish_setup
+register_task "finish" "Finish setup" "fish,tmux,mise,vscode,starship,fonts" finish_setup
 
 # Execute all tasks
 if ! execute_tasks; then

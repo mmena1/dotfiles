@@ -119,66 +119,6 @@ EOF
   }
 }
 
-# ASDF module
-asdf_module() {
-  # Install ASDF version manager
-  install_asdf() {
-    if ! _exists asdf; then
-      action "Installing ASDF version manager"
-      if [[ ! -d ~/.asdf ]]; then
-        # Setting branch to v0.14.0 to avoid breaking changes an newer versions
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0|| return 1
-        source ~/.asdf/asdf.sh
-      else
-        ok "ASDF directory already exists"
-        source ~/.asdf/asdf.sh
-      fi
-    else
-      ok "ASDF already installed"
-    fi
-    return 0
-  }
-  
-  # Install tools defined in .tool-versions
-  install_asdf_tools() {
-    if ! _exists asdf; then
-      error "ASDF not installed"
-      return 1
-    fi
-    
-    if [[ ! -f ~/.tool-versions ]]; then
-      error "~/.tool-versions not found"
-      return 1
-    fi
-    
-    while read -r line; do
-      # get the first word of the line
-      tool_name="${line%% *}"
-      running "$tool_name"
-      
-      # is language already installed?
-      if ! asdf where $tool_name > /dev/null 2>&1; then
-        # does the plugin exist in the remote repos?
-        if asdf plugin list all | grep -E "^$tool_name\s" > /dev/null 2>&1; then
-          # is the plugin not installed already?
-          if ! asdf plugin list | grep "$tool_name" > /dev/null 2>&1; then
-            action "asdf plugin-add $tool_name"
-            asdf plugin-add $tool_name
-          fi
-          action "Installing $tool_name"
-          asdf install $tool_name || error "Couldn't install $tool_name"
-        else
-          error "Plugin $tool_name does not exist"
-        fi
-      else
-        ok "$tool_name already installed"
-      fi
-    done < ~/.tool-versions
-    
-    return 0
-  }
-}
-
 # Shell setup module
 shell_module() {
   # Configure Fish shell
@@ -244,7 +184,7 @@ devtools_module() {
   
   # Setup Fonts
   setup_fonts() {
-    action "Setting up fonts"
+    bot "Setting up fonts"
     
     {{ if eq .osid "darwin" -}}
     # Font installation for macOS handled via Homebrew casks
@@ -275,73 +215,20 @@ devtools_module() {
     
     return 0
   }
-}
 
-# Docker module
-docker_module() {
-  setup_docker() {
-    bot "Checking Docker..."
+  setup_mise() {
+    bot "Checking mise..."
     echo
-    {{ if eq .osid "darwin" -}}
-    warn "Docker setup not supported on macOS"
-    return 0
-    {{ end -}}
-    install_docker
-    configure_docker
-    return 0
-  }
-  
-  install_docker() {
-    if ! _exists docker ; then
-      if prompt "Would you like to install Docker?"; then
-        action "Adding Docker official GPG key"
-        sudo apt-get -qq install -y ca-certificates curl > /dev/null
-        sudo install -m 0755 -d /etc/apt/keyrings
-        sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-        sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-        action "Adding Docker repository to apt sources"
-        echo \
-          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/$(. /etc/os-release && echo "$ID") \
-          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        action "Updating apt packages with the new Docker repository"
-        sudo apt-get -qq update > /dev/null
-        action "Installing Docker"
-        sudo apt-get -qq install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin > /dev/null
+    if ! _exists mise ; then
+      if prompt "Would you like to install mise?"; then
+        action "Installing mise"
+        curl https://mise.run | sh
       else
         ok "Skipping"
       fi
     else
-      ok "Docker already installed"
+      ok "mise already installed"
     fi
-  }
-  # Setup Docker
-  configure_docker() {
-    if ! _exists docker; then
-      error "Docker not installed"
-      return 1
-    fi
-
-    action "Ensuring Docker is running"
-    # Check which service manager is available
-    if command -v systemctl &>/dev/null; then
-      sudo systemctl enable --now docker
-    elif command -v service &>/dev/null; then
-      sudo service docker start
-    else
-      warn "Could not determine how to start Docker service"
-    fi
-
-    # Add user to docker group
-    if ! groups | grep -q docker; then
-      action "Adding user to docker group"
-      sudo usermod -aG docker "$USER"
-      warn "You may need to log out and back in for this to take effect"
-    fi
-
-    ok "Docker configured"
-    return 0
   }
 }
 
